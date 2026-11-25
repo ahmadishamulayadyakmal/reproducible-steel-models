@@ -30,8 +30,11 @@ All notable changes to this project are documented here. Format follows
 
 ### Notes
 
-- Cross-OS CI, `pixi`, Docker, `just` and the Fortran toolchain are not
-  available on the development host; those checks remain open.
+- Post-merge verification (2026-11-25): CI passed on Ubuntu and Windows
+  (run `45545998166`); `git archive 0d3d3f1` reproduced all five metrics and
+  10 tests from a clean checkout. Case tag `c01` follows this release commit.
+- `pixi`, Docker, `just` and the Fortran toolchain are not available on the
+  development host; local container builds and local Fortran runs remain open.
 
 ## [0.1.0] — 2026-11-24 · tag `w04`
 

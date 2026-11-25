@@ -11,8 +11,8 @@
 - [x] `results/metrics.json`, `results/provenance.json` with source fingerprint
 - [x] One-page audit distinguishing reproduced vs external numbers
 - [x] Python test suite green locally (10 tests)
-- [ ] Cross-OS CI evidence on Ubuntu + Windows
-- [ ] Clean-state reproduction from the `c01` tag
+- [x] Cross-OS CI evidence on Ubuntu + Windows (run `45545998166`, PR #1)
+- [x] Clean-state reproduction from `git archive 0d3d3f1` (metrics identical, 10 tests)
 
 ## What was actually completed
 
@@ -43,8 +43,11 @@
   remains an external comparator, not a reproduced result.
 - Y2R12 Table 2 values were not machine-readable; only the text-level claims
   (R² > 0.97, ∼0.98, error <4%) are quoted, with no invented per-model figures.
-- `pixi`, Docker, `just`, `gfortran` and `fpm` are absent locally, so cross-OS
-  CI, container build and Fortran tests are still unverified.
+- `pixi`, Docker, `just`, `gfortran` and `fpm` are absent locally; the
+  container build and local Fortran runs remain unverified. Cross-OS CI and
+  Fortran tests **did** pass in GitHub Actions on both operating systems.
+- The repository's Vercel deployment check fails (no web app to deploy); it is
+  not part of the portfolio CI matrix.
 
 ## Technical decisions
 

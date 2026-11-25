@@ -52,8 +52,10 @@ are recorded in `results/provenance.json`. The full one-page
 [reproducibility audit](docs/reproducibility_audit.md) lists the published
 numbers that could **not** be reproduced (MatBench MODNet MAE 87.7627 MPa and
 the Y2R12 R² > 0.97 claim), each labelled external literature. Cross-OS
-equality and `git archive` reproduction from a clean tag are pending CI and
-the `c01` tag.
+equality is verified in GitHub Actions on Ubuntu
+and Windows (run `45545998166`); a clean `git archive 0d3d3f1` reproduction
+gave identical metrics and 10 passing tests. The case tag `c01` is applied to
+the release commit.
 
 ## Limitations
 

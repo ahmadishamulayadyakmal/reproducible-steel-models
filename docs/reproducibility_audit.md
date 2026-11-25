@@ -63,10 +63,17 @@ python -m pytest
 The command aborts on a checksum mismatch and rewrites `results/*.json` with
 the verified hashes, the source fingerprint and the environment versions.
 
-## Open verification items
+## Verification status
 
-- Cross-OS equality (Ubuntu + Windows) is configured in `.github/workflows/ci.yml`
-  but has **not yet been observed**: CI has not run on the published repository.
-- `git archive` reproduction from a clean tag is pending the case tag `c01`.
-- `pixi`, Docker, `just`, `gfortran` and `fpm` are not installed on the
-  development host; Python tests were run locally, Fortran tests only in CI.
+- **Cross-OS equality: verified.** GitHub Actions run `45545998166` passed
+  Python and Fortran jobs on both `ubuntu-latest` and `windows-latest`.
+- **Clean-state reproduction: verified.** `git archive 0d3d3f1` was extracted
+  into an empty directory, the gitignored raw files were re-added from
+  `data/SOURCES.md`, and `metalkit reproduce` + `pytest` were rerun: all five
+  metrics were identical and 10 tests passed. The case tag `c01` is applied to
+  the release commit.
+- `pixi`, Docker, `just`, `gfortran` and `fpm` are still not installed on the
+  development host; the Fortran check is covered by CI, not locally.
+- The repository's automatic Vercel deployment check fails because this is a
+  Python/Fortran research repo, not a web app. It is unrelated to the portfolio
+  CI matrix and is not used as evidence for any claim here.
