@@ -1,7 +1,7 @@
 """Command-line entry point for metalkit.
 
-``--help``, ``--version``, ``info`` and ``hash`` use only the standard library;
-``reproduce`` loads the scientific stack when it is actually invoked.
+``--help``, ``--version``, ``info``, ``hash`` and ``report`` use only the
+standard library; ``reproduce`` loads the scientific stack when invoked.
 """
 
 from __future__ import annotations
@@ -53,6 +53,14 @@ def build_parser() -> argparse.ArgumentParser:
     reproduce_command.add_argument("--output-dir", default="results")
     reproduce_command.add_argument("--seed", type=int, default=42)
     reproduce_command.add_argument("--fold", type=int, default=0)
+
+    report_command = subcommands.add_parser(
+        "report", help="render the C01 scorecard SVG from results/metrics.json"
+    )
+    report_command.add_argument("--metrics", default="results/metrics.json")
+    report_command.add_argument(
+        "--output", default="docs/figures/c01_scorecard.svg"
+    )
     return parser
 
 
@@ -91,6 +99,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         for name, experiment in result["experiments"].items():
             print(f"{name}: {experiment['metrics']}")
         print(f"wrote {output_dir / 'metrics.json'} and {output_dir / 'provenance.json'}")
+    elif args.command == "report":
+        from metalkit.report import write_scorecard
+
+        output = write_scorecard(Path(args.metrics), Path(args.output))
+        print(f"wrote {output}")
     else:
         parser.print_help()
 

@@ -37,6 +37,15 @@
 | Input files hash-verified | 3 | `data/SOURCES.md` | 0 |
 | External published numbers not reproduced | 2 | audit §"Published numbers" | 0 |
 
+## Post-tag visibility addendum
+
+- Added `docs/results.md`, the README `## Case result (C01)` section and
+  `docs/figures/c01_scorecard.svg`, rendered by `metalkit report` from the
+  committed `results/metrics.json`.
+- Current `main` has 12 passing Python tests. The `c01` tag intentionally stays
+  at the earlier 10-test clean-state release commit; the addendum changes
+  presentation only, not any measured metric.
+
 ## What failed / was not completed
 
 - No MODNet / matminer reproduction: the published MatBench leaderboard MAE

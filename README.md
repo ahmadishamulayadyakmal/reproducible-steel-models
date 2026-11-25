@@ -4,6 +4,20 @@
 > Epic: E01 · Weeks: W01–W04 · Evidence level: **A**
 > Master specification: [`CASES.md`](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/CASES.md) §4 · Download the papers: [`JOURNALS.md`](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/JOURNALS.md)
 
+## Case result (C01)
+
+**Verdict:** reproducibility solved, predictive performance not claimed. Our own
+pinned baselines regenerate exactly from public data: D01 accuracy **0.5013** /
+macro F1 **0.6207**, and `matbench_steels` fold 0 MAE **220.0009 MPa** / RMSE
+**273.1735 MPa** / R² **0.1271**. The published MatBench MODNet MAE
+**87.7627 MPa** and Y2R12 R² **> 0.97** stay external literature, explicitly
+**not reproduced** here. No plant data is used.
+
+![C01 case scorecard](docs/figures/c01_scorecard.svg)
+
+Full result, figure provenance and the list of what is still needed for a
+stronger predictive case: [`docs/results.md`](docs/results.md).
+
 ## Industrial problem
 
 Steel producers publish ML models for mechanical properties with strong R2 values, but downstream quality labs cannot reproduce them. A release decision may rest on an unreproducible number.
@@ -47,8 +61,9 @@ that in [`JOURNALS.md` §8](https://github.com/ahmadishamulayadyakmal/metallurgy
 Our own pinned baselines are reproducible: on D01 (seed 42, stratified 80/20)
 accuracy = **0.5013** and macro F1 = **0.6207**; on `matbench_steels` official
 fold 0, MAE = **220.0009 MPa**, RMSE = **273.1735 MPa** and R² = **0.1271**.
-Each experiment ran twice with identical metrics to four decimals; 10 Python
-tests pass. Input checksums, the source fingerprint and the package versions
+Each experiment ran twice with identical metrics to four decimals; the full
+suite passes locally (12 tests on `main`; the tagged `c01` release had 10).
+Input checksums, the source fingerprint and the package versions
 are recorded in `results/provenance.json`. The full one-page
 [reproducibility audit](docs/reproducibility_audit.md) lists the published
 numbers that could **not** be reproduced (MatBench MODNet MAE 87.7627 MPa and

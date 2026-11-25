@@ -7,7 +7,12 @@ root `README.md`; the master plan, journal list and repository map live in a
 
 ## Local guide
 
-- `README.md` — case specification with the six mandatory sections
+- `README.md` — case specification with the six mandatory sections and the
+  visible `## Case result (C01)` scorecard
+- [`results.md`](results.md) — what was solved, the five reproduced numbers and
+  what is still needed for a stronger predictive case
+- [`figures/c01_scorecard.svg`](figures/c01_scorecard.svg) — result figure
+  generated from `results/metrics.json`
 - [`reproducibility_audit.md`](reproducibility_audit.md) — C01 closeout: our
   reproduced numbers vs external literature numbers
 - [`../data/SOURCES.md`](../data/SOURCES.md) — pinned open datasets and hashes

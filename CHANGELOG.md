@@ -6,6 +6,20 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+
+- Visible case result: `docs/results.md`, a README `## Case result (C01)`
+  section, and `docs/figures/c01_scorecard.svg` generated from committed
+  metrics.
+- `metalkit report` and a deterministic SVG renderer in `metalkit.report`;
+  `just figures` now regenerates the displayed result.
+
+### Changed
+
+- README documentation link now points to the shared BibTeX library in
+  `metallurgy-evidence-audit`, not to a non-existent local path.
+- Current Python suite has 12 tests; the tagged `c01` clean-state release had 10.
+
 ## [0.2.0] — 2026-11-25 · C01 closeout
 
 ### Added
