@@ -19,3 +19,11 @@ every figure caption.
 
 Source policy: `CASES.md` §1 (link above). Before any figure is generated,
 record the dataset and licence in `data/SOURCES.md` in this repository.
+
+## Implemented audit (25 November 2026)
+
+The executed claim boundary is in [`docs/reproducibility_audit.md`](../docs/reproducibility_audit.md):
+five metrics computed here from D01/D04 (evidence A) are in
+[`results/metrics.json`](../results/metrics.json), while the MatBench MODNet
+MAE and the Y2R12 R² claims are listed there as external literature, explicitly
+**not reproduced**.

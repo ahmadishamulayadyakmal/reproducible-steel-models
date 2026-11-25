@@ -26,3 +26,15 @@ def test_info_prints_version_and_schedule(capsys):
     output = capsys.readouterr().out
     assert f"metalkit {__version__}" in output
     assert "52 weekly sprints" in output
+
+
+def test_hash_command_prints_sha256(tmp_path, capsys):
+    import hashlib
+
+    target = tmp_path / "data.bin"
+    target.write_bytes(b"C01")
+
+    assert main(["hash", str(target)]) == 0
+
+    output = capsys.readouterr().out
+    assert hashlib.sha256(b"C01").hexdigest() in output
