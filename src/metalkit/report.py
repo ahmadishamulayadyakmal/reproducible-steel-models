@@ -42,9 +42,11 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
     """Return a deterministic SVG scorecard for the C01 metrics dictionary."""
     experiments = metrics["experiments"]
     summary = metrics["summary"]
+    et_u = experiments["uci_faults_extra_trees"]["metrics"]
+    et_d = experiments["matbench_steels_extra_trees"]["metrics"]
+    gate = experiments["matbench_steels_extra_trees"]["decision_gate"]
     rf_u = experiments["uci_faults_random_forest"]["metrics"]
     rf_d = experiments["matbench_steels_random_forest"]["metrics"]
-    gate = experiments["matbench_steels_random_forest"]["decision_gate"]
     legacy_u = experiments["uci_faults"]["metrics"]
     legacy_d = experiments["matbench_steels"]["metrics"]
 
@@ -88,7 +90,7 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
         txt(
             40,
             78,
-            "RandomForest · public data · 5 seeds / 5 official folds · no plant data",
+            "ExtraTrees · public data · 5 seeds / 5 official folds · no plant data",
             size=14,
             fill=_MUTED,
         ),
@@ -103,11 +105,11 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             fill=_TEAL,
             weight="bold",
         ),
-        row(190, "D01 exact-match accuracy", _stat(rf_u["accuracy"]), _TEAL),
-        row(232, "D01 macro F1", _stat(rf_u["macro_f1"]), _TEAL),
-        row(274, "D04 yield strength MAE", _stat(rf_d["mae_mpa"], " MPa"), _TEAL),
-        row(316, "D04 yield strength RMSE", _stat(rf_d["rmse_mpa"], " MPa"), _TEAL),
-        row(358, "D04 yield strength R²", _stat(rf_d["r2"]), _TEAL),
+        row(190, "D01 exact-match accuracy", _stat(et_u["accuracy"]), _TEAL),
+        row(232, "D01 macro F1", _stat(et_u["macro_f1"]), _TEAL),
+        row(274, "D04 yield strength MAE", _stat(et_d["mae_mpa"], " MPa"), _TEAL),
+        row(316, "D04 yield strength RMSE", _stat(et_d["rmse_mpa"], " MPa"), _TEAL),
+        row(358, "D04 yield strength R²", _stat(et_d["r2"]), _TEAL),
         txt(
             60,
             398,
@@ -125,26 +127,32 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             fill=_AMBER,
             weight="bold",
         ),
-        row(190, "Logistic D01 accuracy", _fmt(legacy_u["accuracy"]), _MUTED),
+        row(182, "Logistic D01 accuracy", _fmt(legacy_u["accuracy"]), _MUTED),
         row(
-            232,
+            216,
+            "RandomForest D01 accuracy",
+            _fmt(rf_u["accuracy"]["mean"]),
+            _MUTED,
+        ),
+        row(
+            250,
             "Ridge D04 MAE (fold 0)",
             f"{_fmt(legacy_d['mae_mpa'])} MPa",
             _MUTED,
         ),
         row(
-            274,
-            "Train-mean D04 MAE",
-            f"{_fmt(rf_d['naive_mae_mpa']['mean'])} MPa",
+            284,
+            "RandomForest D04 MAE",
+            f"{_fmt(rf_d['mae_mpa']['mean'])} MPa",
             _MUTED,
         ),
         row(
-            316,
+            318,
             "MODNet MAE — external",
             f"{_fmt(summary['external_comparator_mae_mpa'])} MPa",
             _AMBER,
         ),
-        row(358, "Y2R12 fatigue R² — external", _EXTERNAL_FATIGUE_R2, _AMBER),
+        row(352, "Y2R12 fatigue R² — external", _EXTERNAL_FATIGUE_R2, _AMBER),
         txt(
             520,
             398,
@@ -166,15 +174,16 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             60,
             526,
             "Requirement: >= 50% on every fold and mean R2 >= 0.70; "
+            f"train-mean MAE {_fmt(et_d['naive_mae_mpa']['mean'])} MPa, "
             f"observed mean R2 = {_fmt(gate['mean_r2'])}.",
             size=14,
         ),
         txt(
             60,
             554,
-            "MODNet 87.7627 MPa is near our "
-            f"{_fmt(summary['d04_random_forest_mae_mpa'])} MPa but uses a "
-            "different model/featurization — not a reproduction.",
+            f"ExtraTrees improves MAE by {_fmt(summary['d04_mae_improvement_vs_random_forest'] * 100, 1)}% "
+            f"over RandomForest; our {_fmt(summary['d04_extra_trees_mae_mpa'])} MPa "
+            "is not a MODNet reproduction.",
             size=14,
         ),
         txt(

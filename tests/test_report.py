@@ -39,15 +39,42 @@ def _sample_metrics() -> dict:
                     "mae_reductions": [0.59, 0.61, 0.66, 0.61, 0.58],
                 },
             },
+            "uci_faults_extra_trees": {
+                "metrics": {
+                    "accuracy": {"mean": 0.6936, "std": 0.0114},
+                    "macro_f1": {"mean": 0.7755, "std": 0.0219},
+                }
+            },
+            "matbench_steels_extra_trees": {
+                "metrics": {
+                    "mae_mpa": {"mean": 79.1707, "std": 8.6980},
+                    "rmse_mpa": {"mean": 112.0894, "std": 12.5902},
+                    "r2": {"mean": 0.8566, "std": 0.0374},
+                    "naive_mae_mpa": {"mean": 229.7445, "std": 9.6958},
+                },
+                "decision_gate": {
+                    "passed": True,
+                    "mean_r2": 0.8566,
+                    "mae_reductions": [0.62, 0.69, 0.65, 0.64, 0.67],
+                },
+            },
         },
         "summary": {
+            "headline_model": "ExtraTrees (n_estimators=500)",
             "case_verdict": "predictive gate passed",
             "decision_gate_passed": True,
+            "d01_extra_trees_accuracy": 0.6936,
+            "d01_extra_trees_accuracy_std": 0.0114,
+            "d01_extra_trees_macro_f1": 0.7755,
+            "d01_extra_trees_macro_f1_std": 0.0219,
             "d01_random_forest_accuracy": 0.6766,
-            "d01_random_forest_accuracy_std": 0.0075,
+            "d04_extra_trees_mae_mpa": 79.1707,
+            "d04_extra_trees_mae_std_mpa": 8.6980,
+            "d04_extra_trees_rmse_mpa": 112.0894,
+            "d04_extra_trees_r2": 0.8566,
+            "d04_extra_trees_r2_std": 0.0374,
+            "d04_mae_improvement_vs_random_forest": 0.1167,
             "d04_random_forest_mae_mpa": 89.6300,
-            "d04_random_forest_mae_std_mpa": 7.4424,
-            "d04_random_forest_r2": 0.8141,
             "d04_naive_mae_mpa": 229.7445,
             "external_comparator_mae_mpa": 87.7627,
             "external_comparator_note": "external literature, not reproduced",
@@ -62,12 +89,14 @@ def test_scorecard_is_deterministic_and_shows_predictive_metrics():
     assert first == second
     assert "C01" in first
     assert "predictive case scorecard" in first
-    assert "0.6766" in first
-    assert "0.7526" in first
+    assert "0.6936" in first
+    assert "0.7755" in first
+    assert "79.1707 MPa" in first
+    assert "112.0894 MPa" in first
+    assert "0.8566" in first
     assert "89.6300 MPa" in first
-    assert "127.9791 MPa" in first
-    assert "0.8141" in first
     assert "Adoption gate: PASS" in first
+    assert "11.7%" in first
     assert "87.7627 MPa" in first
     assert "not reproduced" in first
 

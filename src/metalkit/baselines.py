@@ -1,9 +1,11 @@
 """Reproducibility and predictive baselines for the C01 case.
 
 The original two experiments remain available as historical baselines. The
-predictive extension adds RandomForest models, multi-seed / multi-fold error
-bars and an explicit, case-specific adoption gate. Published scores are quoted
-only in the documentation and are never presented as our results.
+predictive extension adds RandomForest and ExtraTrees models, multi-seed /
+multi-fold error bars and an explicit, case-specific adoption gate. ExtraTrees
+is the current headline predictive model; RandomForest is retained as a
+deterministic comparator. Published scores are quoted only in the
+documentation and are never presented as our results.
 """
 
 from __future__ import annotations
@@ -15,7 +17,12 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import (
+    ExtraTreesClassifier,
+    ExtraTreesRegressor,
+    RandomForestClassifier,
+    RandomForestRegressor,
+)
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error
 from sklearn.model_selection import train_test_split
@@ -40,8 +47,8 @@ OFFICIAL_FOLDS: tuple[int, ...] = (0, 1, 2, 3, 4)
 # It is intentionally simple and is evaluated only on public data.
 DECISION_RULE: dict[str, Any] = {
     "description": (
-        "Adopt only if RandomForest MAE is at least 50% lower than the "
-        "train-mean predictor on every official fold AND mean R2 >= 0.70."
+        "Adopt only if the headline ensemble MAE is at least 50% lower than "
+        "the train-mean predictor on every official fold AND mean R2 >= 0.70."
     ),
     "min_mae_reduction_vs_naive": 0.50,
     "min_mean_r2": 0.70,
@@ -154,7 +161,13 @@ def _uci_estimator(model: str, seed: int):
         return RandomForestClassifier(
             n_estimators=300, random_state=seed, n_jobs=1
         )
-    raise ValueError(f"Unknown UCI model {model!r}; use logistic or random_forest")
+    if model == "extra_trees":
+        return ExtraTreesClassifier(
+            n_estimators=500, random_state=seed, n_jobs=1
+        )
+    raise ValueError(
+        f"Unknown UCI model {model!r}; use logistic, random_forest or extra_trees"
+    )
 
 
 def _uci_model_label(model: str, seed: int) -> str:
@@ -163,9 +176,11 @@ def _uci_model_label(model: str, seed: int) -> str:
             "StandardScaler + OneVsRestClassifier(LogisticRegression("
             "max_iter=2000, solver=lbfgs, n_jobs=1))"
         )
-    return (
-        f"RandomForestClassifier(n_estimators=300, random_state={seed}, n_jobs=1)"
-    )
+    if model == "random_forest":
+        return (
+            f"RandomForestClassifier(n_estimators=300, random_state={seed}, n_jobs=1)"
+        )
+    return f"ExtraTreesClassifier(n_estimators=500, random_state={seed}, n_jobs=1)"
 
 
 def run_uci_faults(
@@ -244,17 +259,26 @@ def _matbench_estimator(model: str):
         return RandomForestRegressor(
             n_estimators=300, random_state=42, n_jobs=1
         )
+    if model == "extra_trees":
+        return ExtraTreesRegressor(
+            n_estimators=500, random_state=42, n_jobs=1
+        )
     raise ValueError(
-        f"Unknown MatBench model {model!r}; use ridge or random_forest"
+        f"Unknown MatBench model {model!r}; use ridge, random_forest or extra_trees"
     )
 
 
 def _matbench_model_label(model: str) -> str:
     if model == "ridge":
         return "atomic-fraction composition vector + Ridge(alpha=1.0, cholesky)"
+    if model == "random_forest":
+        return (
+            "train-fitted atomic-fraction vector + RandomForestRegressor("
+            "n_estimators=300, random_state=42)"
+        )
     return (
-        "train-fitted atomic-fraction vector + RandomForestRegressor("
-        "n_estimators=300, random_state=42)"
+        "train-fitted atomic-fraction vector + ExtraTreesRegressor("
+        "n_estimators=500, random_state=42)"
     )
 
 
@@ -393,21 +417,45 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
         run_matbench_steels_multi,
         {"data_dir": data_dir, "folds": OFFICIAL_FOLDS, "model": "random_forest"},
     )
+    experiments["uci_faults_extra_trees"] = _run_twice(
+        "uci_faults_extra_trees",
+        run_uci_faults_multi,
+        {"data_dir": data_dir, "seeds": PREDICTIVE_SEEDS, "model": "extra_trees"},
+    )
+    experiments["matbench_steels_extra_trees"] = _run_twice(
+        "matbench_steels_extra_trees",
+        run_matbench_steels_multi,
+        {"data_dir": data_dir, "folds": OFFICIAL_FOLDS, "model": "extra_trees"},
+    )
 
-    d01 = experiments["uci_faults_random_forest"]["metrics"]
-    d04 = experiments["matbench_steels_random_forest"]["metrics"]
-    gate = experiments["matbench_steels_random_forest"]["decision_gate"]
+    rf_d01 = experiments["uci_faults_random_forest"]["metrics"]
+    rf_d04 = experiments["matbench_steels_random_forest"]["metrics"]
+    d01 = experiments["uci_faults_extra_trees"]["metrics"]
+    d04 = experiments["matbench_steels_extra_trees"]["metrics"]
+    gate = experiments["matbench_steels_extra_trees"]["decision_gate"]
+    mae_gain = (
+        rf_d04["mae_mpa"]["mean"] - d04["mae_mpa"]["mean"]
+    ) / rf_d04["mae_mpa"]["mean"]
     summary = {
+        "headline_model": "ExtraTrees (n_estimators=500)",
         "case_verdict": (
             "predictive gate passed" if gate["passed"] else "predictive gate not passed"
         ),
         "decision_gate_passed": bool(gate["passed"]),
-        "d01_random_forest_accuracy": d01["accuracy"]["mean"],
-        "d01_random_forest_accuracy_std": d01["accuracy"]["std"],
-        "d04_random_forest_mae_mpa": d04["mae_mpa"]["mean"],
-        "d04_random_forest_mae_std_mpa": d04["mae_mpa"]["std"],
-        "d04_random_forest_r2": d04["r2"]["mean"],
+        "d01_extra_trees_accuracy": d01["accuracy"]["mean"],
+        "d01_extra_trees_accuracy_std": d01["accuracy"]["std"],
+        "d01_extra_trees_macro_f1": d01["macro_f1"]["mean"],
+        "d01_extra_trees_macro_f1_std": d01["macro_f1"]["std"],
+        "d04_extra_trees_mae_mpa": d04["mae_mpa"]["mean"],
+        "d04_extra_trees_mae_std_mpa": d04["mae_mpa"]["std"],
+        "d04_extra_trees_rmse_mpa": d04["rmse_mpa"]["mean"],
+        "d04_extra_trees_r2": d04["r2"]["mean"],
+        "d04_extra_trees_r2_std": d04["r2"]["std"],
         "d04_naive_mae_mpa": d04["naive_mae_mpa"]["mean"],
+        "d04_mae_improvement_vs_random_forest": round(float(mae_gain), 4),
+        "d01_random_forest_accuracy": rf_d01["accuracy"]["mean"],
+        "d04_random_forest_mae_mpa": rf_d04["mae_mpa"]["mean"],
+        "d04_random_forest_r2": rf_d04["r2"]["mean"],
         "external_comparator_mae_mpa": 87.7627,
         "external_comparator_note": (
             "MatBench MODNet v0.1.12, different model and featurization; "

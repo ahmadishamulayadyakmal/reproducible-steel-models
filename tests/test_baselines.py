@@ -64,6 +64,8 @@ def test_reproduce_is_deterministic_and_records_predictive_summary():
         "uci_faults_random_forest",
         "matbench_steels_ridge_folds",
         "matbench_steels_random_forest",
+        "uci_faults_extra_trees",
+        "matbench_steels_extra_trees",
     }
     for experiment in result["experiments"].values():
         assert "n_samples" in experiment
@@ -77,7 +79,10 @@ def test_reproduce_is_deterministic_and_records_predictive_summary():
                 assert round(payload, 4) == payload
 
     summary = result["summary"]
+    assert summary["headline_model"].startswith("ExtraTrees")
     assert summary["decision_gate_passed"] is True
-    assert summary["d04_random_forest_mae_mpa"] < 0.5 * summary["d04_naive_mae_mpa"]
-    assert summary["d04_random_forest_r2"] >= 0.70
-    assert summary["d01_random_forest_accuracy_std"] >= 0.0
+    assert summary["d04_extra_trees_mae_mpa"] < 0.5 * summary["d04_naive_mae_mpa"]
+    assert summary["d04_extra_trees_r2"] >= 0.70
+    assert summary["d04_mae_improvement_vs_random_forest"] > 0.0
+    assert summary["d01_extra_trees_accuracy"] > summary["d01_random_forest_accuracy"]
+    assert summary["d01_extra_trees_accuracy_std"] >= 0.0

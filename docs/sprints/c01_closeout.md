@@ -53,8 +53,19 @@
   explicit adoption gate (≥50% MAE reduction on every fold, mean R² ≥ 0.70).
 - Measured: D01 accuracy **0.6766 ± 0.0075**, macro F1 **0.7526 ± 0.0176**;
   D04 MAE **89.6300 ± 7.4424 MPa**, R² **0.8141 ± 0.0388**. Gate **passed**.
-- The `c01` tag still marks the reproducibility release; the predictive
-  extension is later on `main`. Current suite: **14 passing Python tests**.
+- The `c01` tag still marks the reproducibility release; `c01-predictive` marks
+  the first predictive release. Current suite: **14 passing Python tests**.
+
+## ExtraTrees improvement addendum (same day)
+
+- A small deterministic comparison showed ExtraTrees beating RandomForest with
+  no new dependency: D01 accuracy **0.6936 ± 0.0114**, macro F1
+  **0.7755 ± 0.0219**; D04 MAE **79.1707 ± 8.6980 MPa**, R² **0.8566 ± 0.0374**.
+- D04 MAE is **11.67% lower** than the RandomForest comparator; the adoption
+  gate still passes on all five official folds.
+- MODNet 87.7627 MPa remains external literature. Our numerically lower MAE is
+  not advertised as a like-for-like benchmark win because model and
+  featurization differ.
 
 ## What failed / was not completed
 

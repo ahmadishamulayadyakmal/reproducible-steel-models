@@ -2,7 +2,7 @@ cff-version: 1.2.0
 title: Computational Metallurgy Portfolio
 message: If you use this software or its benchmark artefacts, please cite it.
 type: software
-version: 0.3.0
+version: 0.4.0
 date-released: 2026-11-25
 license: MIT
 authors:

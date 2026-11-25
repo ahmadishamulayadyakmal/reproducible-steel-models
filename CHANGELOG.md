@@ -6,6 +6,23 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-11-25 · Improved predictive case
+
+### Added
+
+- Deterministic ExtraTrees models for D01 and D04 as the new headline
+  predictors; RandomForest is retained as a comparator payload.
+- `summary.headline_model`, ExtraTrees metrics and the MAE gain over
+  RandomForest in `results/metrics.json`.
+- Updated scorecard, model card and results page showing the improved numbers.
+
+### Changed
+
+- D04 MAE improved from 89.6300 to **79.1707 MPa** (11.67% lower); D01 accuracy
+  improved from 0.6766 to **0.6936**. R² improved from 0.8141 to **0.8566**.
+- The adoption gate description now refers to the headline ensemble rather than
+  a specific model.
+
 ## [0.3.0] — 2026-11-25 · C01 predictive case
 
 ### Added
