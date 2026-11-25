@@ -4,7 +4,7 @@ channels:
 dependencies:
   - python=3.11
   - pip
-  # Fortran toolchain: fpm 0.12 (W02 target) with a Fortran 2018 compiler.
+  # Fortran toolchain: fpm 0.12 with a Fortran 2018 compiler.
   - gfortran>=11
   - fpm=0.12
   # Scientific Python stack declared by pyproject.toml.

@@ -9,9 +9,7 @@ authors:
   - family-names: Akmal
     given-names: Ahmad Ishamul Ayady
 abstract: >-
-  A reproducible ICME portfolio built in 52 weekly sprints: open metallurgy
-  data, machine learning, self-written modern Fortran solvers, and explicit
-  verification and validation against journal and experimental benchmarks.
+  Open-data metallurgy case study: Computational Metallurgy Portfolio.
 keywords:
   - metallurgy
   - materials-informatics

@@ -20,9 +20,9 @@ running the reproducibility experiment.
 - `metalkit reproduce` recomputes all three SHA-256 values and refuses to run
   if a downloaded file differs from this table. It writes the verified hashes
   into `results/provenance.json`.
-- Numbers produced from D01 and D04 are **our own** (evidence level A).
+- Numbers produced from D01 and D04 are **our own**, computed from public data.
 - Published scores quoted in `docs/reproducibility_audit.md` (MatBench
   leaderboard, Y2R12) are **external literature**, not our results. They were
   obtained with different models/featurization and are marked *not reproduced*.
-- Publisher PDFs are never committed. See `JOURNALS.md` §1 in the planning
-  repository for the full access and citation policy.
+- Publisher PDFs are never committed. Dataset licences and citation rules are
+  recorded here; external literature is cited by DOI.

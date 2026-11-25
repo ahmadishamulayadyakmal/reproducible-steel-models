@@ -1,6 +1,6 @@
 module libthermo
   !! Minimal thermodynamic/numerical kernel library for the portfolio.
-  !! Physics kernels (mesh, FVM, enthalpy-porosity) are added in W09-W13.
+  !! Physics kernels (mesh, FVM, enthalpy-porosity) are added here.
   implicit none
   private
 

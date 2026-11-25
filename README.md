@@ -1,9 +1,5 @@
 # Reproducibility of published steel-property models (C01)
 
-> Workspace folder: `e01-infra-toolchain` · Suggested GitHub repository: `reproducible-steel-models`
-> Epic: E01 · Weeks: W01–W04 · Evidence level: **A**
-> Master specification: [`CASES.md`](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/CASES.md) §4 · Download the papers: [`JOURNALS.md`](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/JOURNALS.md)
-
 ## Case result (C01)
 
 **Verdict:** predictive case — adoption gate **PASS** with nested hyperparameter
@@ -19,6 +15,8 @@ MODNet **87.7627 MPa** and Y2R12 R² **> 0.97** remain external literature,
 
 ![C01 predictive scorecard](docs/figures/c01_scorecard.svg)
 
+![C01 model comparison: D01 accuracy progression, D04 fold MAE, R² and gate](docs/figures/c01_model_comparison.svg)
+
 Full tables, leakage control, claim boundary and remaining gaps:
 [`docs/results.md`](docs/results.md). The original reproducibility audit is
 still in [`docs/reproducibility_audit.md`](docs/reproducibility_audit.md).
@@ -31,12 +29,9 @@ Steel producers publish ML models for mechanical properties with strong R2 value
 
 ## Data (no plant data)
 
-Open data only: UCI Steel Plates Faults (D01, CC BY 4.0) and MatBench `matbench_steels` (R08/D04). No plant data. Evidence level A: we report our own numbers.
+Open data only: UCI Steel Plates Faults (D01, CC BY 4.0) and MatBench `matbench_steels` (R08/D04). No plant data.
 
-> The author cannot supply factory data. This project uses **only open datasets and
-> credible peer-reviewed journals**. If this is a B-level case, the case report
-> must contain the exact disclaimer from `CASES.md` §1 and must **never** claim
-> plant validation.
+> Only open datasets and published literature are used. No plant or proprietary data are held here; plant numbers quoted from papers are external literature, not independently reproduced results.
 
 ## Tool chain
 
@@ -44,22 +39,16 @@ Open data only: UCI Steel Plates Faults (D01, CC BY 4.0) and MatBench `matbench_
 
 ## Journal references
 
-- **R07** — matminer featurization API and version pinning.
-- **R08** — official MatBench splits and honest baseline comparator.
-- **Y2R12** — the fatigue dataset whose published R2 is quoted as external, non-reproduced literature.
+- **R07** ([DOI](https://doi.org/10.1016/j.commatsci.2018.05.018)) — matminer featurization API and version pinning.
+- **R08** ([DOI](https://doi.org/10.1038/s41524-020-00406-3)) — official MatBench splits and honest baseline comparator.
+- **Y2R12** ([DOI](https://doi.org/10.1186/2193-9772-3-8)) — the fatigue dataset whose published R2 is quoted as external, non-reproduced literature.
 - **R31** — V&V and claim language for the reproducibility audit.
-- **D01** — UCI Steel Plates Faults, provenance and checksum.
-- **D04** — MatBench data/version pinning.
-
-Each reference above is listed with its DOI or stable URL, access status and
-manual download route in [`JOURNALS.md` §4](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/JOURNALS.md). The shared BibTeX library lives in
-[`metallurgy-evidence-audit/papers/references.bib`](https://github.com/ahmadishamulayadyakmal/metallurgy-evidence-audit/blob/main/papers/references.bib).
-Do not cite a paper you have not been able to obtain; if it is inaccessible, record
-that in [`JOURNALS.md` §8](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/JOURNALS.md).
+- **D01** ([source](https://archive.ics.uci.edu/dataset/198/steel+plates+faults)) — UCI Steel Plates Faults, provenance and checksum.
+- **D04** ([source](https://matbench.materialsproject.org/)) — MatBench data/version pinning.
 
 ## Deliverables
 
-`metalkit` CLI + pytest suite; `libthermo` Fortran kernel + first unit test; locked `pixi.toml`, `environment.yml`, `Dockerfile`; CI matrix; `docs/vv_template.md`; `docs/model_card.md`; sprint notes `w01`–`w04`; one-page reproducibility audit.
+`metalkit` CLI + pytest suite; `libthermo` Fortran kernel + first unit test; locked `pixi.toml`, `environment.yml`, `Dockerfile`; CI matrix; `docs/vv_template.md`; `docs/model_card.md`; one-page reproducibility audit.
 
 ## Validation & claims
 
@@ -74,18 +63,13 @@ and now nested-CV ExtraTrees: D01 accuracy **0.7486 ± 0.0072**, D04 MAE
 adoption gate; nested search is 1.87% below fixed ExtraTrees and 13.32% below
 RandomForest on D04 MAE. Inner folds select `max_features` and
 `min_samples_leaf` without touching the outer split. Every experiment payload
-is executed twice and must match exactly; the suite has 16 passing tests on
-`main` (the tagged `c01` release had 10).
+is executed twice and must match exactly; the suite has 17 passing tests on
+`main`.
 Input checksums, the source fingerprint and package versions are recorded in
 `results/provenance.json`. The one-page
 [reproducibility audit](docs/reproducibility_audit.md) remains the historical
 record and lists the published numbers that were **not** reproduced
-(MatBench MODNet MAE 87.7627 MPa and the Y2R12 R² > 0.97 claim). Cross-OS
-equality was previously verified in GitHub Actions run `45545998166` on Ubuntu
-and Windows; a clean `git archive 0d3d3f1` reproduction gave identical metrics
-and 10 passing tests. Tags `c01`, `c01-predictive` and `c01-extra-trees` remain
-at their verified release commits; this nested-search improvement is tagged
-`c01-nested-search` and does not move them.
+(MatBench MODNet MAE 87.7627 MPa and the Y2R12 R² > 0.97 claim). Cross-OS and clean-checkout verification details are recorded in [`docs/reproducibility_audit.md`](docs/reproducibility_audit.md).
 
 ## Limitations
 
@@ -98,41 +82,13 @@ reproduced here, so the numerically lower nested MAE is not a like-for-like
 benchmark win. The nested grid is deliberately small and auditable, not an
 exhaustive optimizer run.
 
-## Definition of Done
+## Repository layout
 
-1 merged PR · green tests · 1 new artefact · 1 README paragraph · 1 sprint note
-`docs/sprints/wNN.md` · tag `wNN`. Before the case tag `c01` is created,
-this README must contain all six sections: Industrial problem, Data (no plant
-data), Tool chain, Journal references, Validation & claims, Limitations.
+- `README.md` — case summary, data policy, method, results and limitations.
+- `CONTRIBUTING.md` — how to propose changes.
+- `docs/index.md` — documentation map.
+- `docs/model_card.md` and `docs/vv_template.md` — reporting templates.
+- `.github/workflows/ci.yml` — automated checks.
 
-## Repository skeleton
-
-Shared files: `CONTRIBUTING.md` (sprint contract), `.github/` (issue, PR and
-CI templates), `docs/sprints/wNN.md`, `docs/vv_template.md` and
-`docs/model_card.md`. `CASES.md`, `JOURNALS.md` and `REPOSITORIES.md` are in a
-separate planning repository; their links above remain valid after this folder
-is pushed as its own repository.
-
-The real industrial case dossier is in `case/`: `README.md` (full case card),
-`evidence.md`, `sources.md` and `week_plan.md`.
-
-## Repository status and GitHub Desktop
-
-This folder is already a Git repository on `main`, pushed to GitHub as
-`reproducible-steel-models` with an SSH `origin`. In GitHub Desktop, choose **Add local
-repository** and select this folder; do not clone into the same path.
-
-```bash
-git status --short --branch
-git pull --rebase origin main
-git push origin main
-```
-
-Weekly work follows `CONTRIBUTING.md`: one PR, green tests, one artefact, one
-README paragraph, `docs/sprints/wNN.md`, tag `wNN`. Tag `c01` only after
-all six README sections are complete.
-
-
-## Language
-
-All artefacts in this repository are written in **English**.
+Only open data and published literature are used. No plant or proprietary data
+are included. All artefacts are written in English.

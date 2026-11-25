@@ -25,8 +25,12 @@ reproduction of MODNet or the Y2R12 published R².
 
 ![C01 predictive scorecard generated from results/metrics.json](figures/c01_scorecard.svg)
 
-The figure is generated from [`../results/metrics.json`](../results/metrics.json)
-by `python -m metalkit.cli report`; no plotting dependency was added.
+![C01 model comparison generated from results/metrics.json](figures/c01_model_comparison.svg)
+
+Both figures are generated from [`../results/metrics.json`](../results/metrics.json)
+by `python -m metalkit.cli report`; no plotting dependency was added. The
+comparison chart shows the D01 accuracy progression, D04 fold-level MAE and R²,
+and the five fold-wise MAE reductions against the 50% gate.
 
 ## Nested-search protocol
 
@@ -129,8 +133,7 @@ The earlier reproducibility audit, including the exact claim boundary, is in
 
 ```bash
 python -m metalkit.cli reproduce --data-dir data/raw --output-dir results
-python -m metalkit.cli report --metrics results/metrics.json \
-    --output docs/figures/c01_scorecard.svg
+python -m metalkit.cli report --metrics results/metrics.json
 python -m pytest
 ```
 
@@ -144,6 +147,6 @@ just test-py
 
 ## Claim boundary
 
-Evidence level **A**: public datasets and our own computation. No plant data
-was used. Every number in the "not reproduced" table is quoted from external
-literature and is explicitly not our measured result.
+All reported results come from public datasets and our own computation. No
+plant data was used. Every number in the "not reproduced" table is quoted from
+external literature and is explicitly not our measured result.

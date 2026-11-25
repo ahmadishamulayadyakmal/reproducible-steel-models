@@ -26,5 +26,5 @@
 <text x="60" y="526" fill="#17202c" font-size="14" font-weight="normal" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">Requirement: &gt;= 50% on every fold and mean R2 &gt;= 0.70; train-mean MAE 229.7445 MPa, observed mean R2 = 0.8581.</text>
 <text x="60" y="554" fill="#17202c" font-size="14" font-weight="normal" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">Nested search: MAE 1.9% below fixed ExtraTrees; D01 accuracy +5.50 pp. Our 77.6894 MPa is not a MODNet reproduction.</text>
 <text x="60" y="584" fill="#b45309" font-size="14" font-weight="bold" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">No plant data. No MODNet reproduction and no plant validation is claimed.</text>
-<text x="40" y="642" fill="#5b6673" font-size="12" font-weight="normal" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">generated from results/metrics.json · base_commit 8f577ff56ca7</text>
+<text x="40" y="642" fill="#5b6673" font-size="12" font-weight="normal" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">generated from results/metrics.json · base_commit 3020c9968720</text>
 </svg>

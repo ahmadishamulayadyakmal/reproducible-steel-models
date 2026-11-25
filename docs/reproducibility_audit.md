@@ -54,7 +54,7 @@ is competitive.
 
 No per-model Table 2 numbers from Y2R12 are transcribed here because the
 full-size table was not obtainable as machine-readable text; inventing them
-would violate the provenance rule in `CASES.md` §1.
+would violate the provenance rule stated in this repository.
 
 ## Reproduce locally
 

@@ -21,10 +21,10 @@ info:
 reproduce:
     python -m metalkit.cli reproduce --data-dir data/raw --output-dir results
 
-# Render the C01 case scorecard from the committed metrics.
+# Render the C01 scorecard and comparison charts from the committed metrics.
 figures:
-    python -m metalkit.cli report --metrics results/metrics.json --output docs/figures/c01_scorecard.svg
+    python -m metalkit.cli report --metrics results/metrics.json --output docs/figures/c01_scorecard.svg --comparison-output docs/figures/c01_model_comparison.svg
 
-# Alias used in GRAND_PLAN.md: "make all" == "just all"
+# "make all" is an alias for the full test target below.
 all: test
     @echo "All checks passed."

@@ -6,6 +6,14 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+
+- Deterministic `c01_model_comparison.svg` chart generated from
+  `results/metrics.json`: D01 accuracy progression, D04 fold-level MAE and R²,
+  and the five fold-wise MAE reductions against the 50% gate.
+- `metalkit report --comparison-output` writes the comparison chart beside the
+  scorecard by default; `just figures` renders both.
+
 ## [0.5.0] — 2026-11-25 · Nested hyperparameter search
 
 ### Added
@@ -100,20 +108,19 @@ All notable changes to this project are documented here. Format follows
 - `pixi`, Docker, `just` and the Fortran toolchain are not available on the
   development host; local container builds and local Fortran runs remain open.
 
-## [0.1.0] — 2026-11-24 · tag `w04`
+## [0.1.0] — 2026-11-24
 
 ### Added
 
-- Repository skeleton for the 52-sprint computational metallurgy portfolio.
+- Initial repository skeleton for the computational metallurgy portfolio.
 - `metalkit` Python package with a minimal CLI (`--version`, `--help`, `info`) and pytest suite.
 - `libthermo` Fortran library with a unit test runnable through `fpm test`.
 - Reproducible environment files (`pixi.toml`, `environment.yml`, `Dockerfile`).
 - CI matrix for Ubuntu and Windows (Python + Fortran tests).
-- `data/SOURCES.md` template and sprint notes `w01`–`w04`.
+- `data/SOURCES.md` dataset provenance template.
 
 ### Notes
 
-- No datasets, models, or physics results yet. First data ingestion is W05–W06;
-  first verified solver is W09–W13.
+- No datasets, models, or physics results in this initial release.
 - Local validation was Python-only because `gfortran`/`fpm` are not installed on the
   development host; Fortran tests are exercised in CI.

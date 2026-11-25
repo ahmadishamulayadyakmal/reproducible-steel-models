@@ -1,6 +1,6 @@
 program test_libthermo
   !! Dependency-free smoke test so `fpm test` works with no network access.
-  !! A test framework will be introduced with the solver tests in W09.
+  !! A test framework will be introduced with the solver tests.
   use libthermo, only : dp, version, kelvin_from_celsius, celsius_from_kelvin
   implicit none
 

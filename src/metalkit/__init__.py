@@ -2,8 +2,7 @@
 
 C01 provides pinned dataset provenance, deterministic reproducibility baselines
 and a predictive ExtraTrees case with nested hyperparameter search, five-seed /
-five-fold error bars and an explicit adoption gate. A schema-driven ingestion
-layer arrives in E02 (W05-W08).
+five-fold error bars and an explicit adoption gate.
 """
 
 from importlib.metadata import PackageNotFoundError, version

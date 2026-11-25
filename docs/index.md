@@ -1,38 +1,10 @@
 # Documentation index
 
-This repository is one of the 12 case repositories of the computational
-metallurgy portfolio. Case specification and claim boundaries are in the
-root `README.md`; the master plan, journal list and repository map live in a
-**separate planning repository** and are linked from the root README.
+- `README.md` — case overview, data policy, method, results and limitations.
+- `CONTRIBUTING.md` — contribution flow and evidence standard.
+- `docs/model_card.md` — model card template for trained models.
+- `docs/vv_template.md` — verification and validation report template.
+- `.github/workflows/ci.yml` — automated checks.
 
-## Local guide
-
-- `README.md` — case specification with the six mandatory sections and the
-  visible `## Case result (C01)` scorecard
-- [`results.md`](results.md) — predictive case verdict, nested-CV five-fold /
-  five-seed results, adoption gate and remaining gaps
-- [`figures/c01_scorecard.svg`](figures/c01_scorecard.svg) — result figure
-  generated from `results/metrics.json`
-- [`model_card.md`](model_card.md) — model card for the nested-CV ExtraTrees
-  headline, fixed ExtraTrees and RandomForest comparators
-- [`reproducibility_audit.md`](reproducibility_audit.md) — historical C01
-  reproducibility closeout and external-literature claim boundary
-- [`../data/SOURCES.md`](../data/SOURCES.md) — pinned open datasets and hashes
-- `../results/` — generated metrics and provenance JSON (committed artefacts)
-- `CONTRIBUTING.md` — sprint contract, evidence rules and tag policy
-- `sprints/wNN.md` — sprint note template; copy for each `wNN`
-- `vv_template.md` — verification & validation report template
-- `.github/` — sprint issue template, PR template and starter CI
-
-## Before the first sprint
-
-1. Copy `sprints/wNN.md` to `sprints/wNN.md` with the real week number.
-2. Read the reference IDs listed in `README.md` and record access status in
-   `JOURNALS.md` in the planning repository.
-3. Add every dataset to `data/SOURCES.md` (create it if this repository has a
-   `data/` folder).
-4. Keep the six README sections intact; tag `cNN` only when the case gate is
-   met.
-
-E01 uses a full Python + Fortran CI matrix; the other repositories start with
-the generic hygiene + Python-test workflow in `.github/workflows/ci.yml`.
+Case-specific results and reproduction notes are in `README.md` and in
+`docs/results.md` or `docs/reproducibility_audit.md` where present.

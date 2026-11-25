@@ -3,7 +3,7 @@
 import json
 
 from metalkit.cli import main
-from metalkit.report import build_scorecard_svg
+from metalkit.report import build_comparison_svg, build_scorecard_svg
 
 
 def _sample_metrics() -> dict:
@@ -57,6 +57,13 @@ def _sample_metrics() -> dict:
                     "mean_r2": 0.8566,
                     "mae_reductions": [0.62, 0.69, 0.65, 0.64, 0.67],
                 },
+                "per_fold": [
+                    {"fold": 0, "metrics": {"mae_mpa": 90.9130, "r2": 0.7990}},
+                    {"fold": 1, "metrics": {"mae_mpa": 67.7081, "r2": 0.8991}},
+                    {"fold": 2, "metrics": {"mae_mpa": 77.9893, "r2": 0.8567}},
+                    {"fold": 3, "metrics": {"mae_mpa": 86.9427, "r2": 0.8938}},
+                    {"fold": 4, "metrics": {"mae_mpa": 72.3003, "r2": 0.8344}},
+                ],
             },
             "uci_faults_nested_extra_trees": {
                 "metrics": {
@@ -76,6 +83,48 @@ def _sample_metrics() -> dict:
                     "mean_r2": 0.8581,
                     "mae_reductions": [0.6246, 0.6817, 0.6511, 0.6813, 0.6726],
                 },
+                "per_fold": [
+                    {
+                        "fold": 0,
+                        "metrics": {
+                            "mae_mpa": 90.6403,
+                            "naive_mae_mpa": 241.4591,
+                            "r2": 0.8000,
+                        },
+                    },
+                    {
+                        "fold": 1,
+                        "metrics": {
+                            "mae_mpa": 69.8296,
+                            "naive_mae_mpa": 219.3770,
+                            "r2": 0.8927,
+                        },
+                    },
+                    {
+                        "fold": 2,
+                        "metrics": {
+                            "mae_mpa": 78.7737,
+                            "naive_mae_mpa": 225.7932,
+                            "r2": 0.8526,
+                        },
+                    },
+                    {
+                        "fold": 3,
+                        "metrics": {
+                            "mae_mpa": 76.8826,
+                            "naive_mae_mpa": 241.2035,
+                            "r2": 0.9106,
+                        },
+                    },
+                    {
+                        "fold": 4,
+                        "metrics": {
+                            "mae_mpa": 72.3206,
+                            "naive_mae_mpa": 220.8898,
+                            "r2": 0.8344,
+                        },
+                    },
+                ],
             },
         },
         "summary": {
@@ -135,6 +184,23 @@ def test_scorecard_is_deterministic_and_shows_predictive_metrics():
     assert "not reproduced" in first
 
 
+def test_comparison_chart_is_deterministic_and_uses_fold_metrics():
+    first = build_comparison_svg(_sample_metrics())
+    second = build_comparison_svg(_sample_metrics())
+
+    assert first == second
+    assert "C01 — model comparison" in first
+    assert "D01 · exact-match accuracy" in first
+    assert "0.7486 ± 0.0072" in first
+    assert "D04 · MAE by official fold" in first
+    assert "90.6" in first
+    assert "D04 · R² by official fold" in first
+    assert "0.9106" in first
+    assert "50% requirement" in first
+    assert "62.46%" in first
+    assert "MODNet" not in first
+
+
 def test_report_command_writes_svg(tmp_path, capsys):
     metrics_path = tmp_path / "metrics.json"
     metrics_path.write_text(json.dumps(_sample_metrics()), encoding="utf-8")
@@ -143,4 +209,7 @@ def test_report_command_writes_svg(tmp_path, capsys):
     assert main(["report", "--metrics", str(metrics_path), "--output", str(output_path)]) == 0
     assert output_path.exists()
     assert "C01" in output_path.read_text(encoding="utf-8")
+    comparison = output_path.with_name("c01_model_comparison.svg")
+    assert comparison.exists()
+    assert "model comparison" in comparison.read_text(encoding="utf-8")
     assert "wrote" in capsys.readouterr().out
