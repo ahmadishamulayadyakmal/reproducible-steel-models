@@ -43,7 +43,17 @@ able to obtain; if it is inaccessible, record that in `JOURNALS.md` §8.
 
 ## Validation & claims
 
-Same commit, two operating systems, identical metrics to 4 decimal places; `git archive w04` clean-state reproduction; explicit list of published numbers that could NOT be reproduced.
+Our own pinned baselines are reproducible: on D01 (seed 42, stratified 80/20)
+accuracy = **0.5013** and macro F1 = **0.6207**; on `matbench_steels` official
+fold 0, MAE = **220.0009 MPa**, RMSE = **273.1735 MPa** and R² = **0.1271**.
+Each experiment ran twice with identical metrics to four decimals; 10 Python
+tests pass. Input checksums, the source fingerprint and the package versions
+are recorded in `results/provenance.json`. The full one-page
+[reproducibility audit](docs/reproducibility_audit.md) lists the published
+numbers that could **not** be reproduced (MatBench MODNet MAE 87.7627 MPa and
+the Y2R12 R² > 0.97 claim), each labelled external literature. Cross-OS
+equality and `git archive` reproduction from a clean tag are pending CI and
+the `c01` tag.
 
 ## Limitations
 

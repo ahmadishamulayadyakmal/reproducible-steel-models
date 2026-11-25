@@ -8,6 +8,10 @@ root `README.md`; the master plan, journal list and repository map live in a
 ## Local guide
 
 - `README.md` — case specification with the six mandatory sections
+- [`reproducibility_audit.md`](reproducibility_audit.md) — C01 closeout: our
+  reproduced numbers vs external literature numbers
+- [`../data/SOURCES.md`](../data/SOURCES.md) — pinned open datasets and hashes
+- `../results/` — generated metrics and provenance JSON (committed artefacts)
 - `CONTRIBUTING.md` — sprint contract, evidence rules and tag policy
 - `sprints/wNN.md` — sprint note template; copy for each `wNN`
 - `vv_template.md` — verification & validation report template
