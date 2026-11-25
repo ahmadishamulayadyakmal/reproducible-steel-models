@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metalkit"
+version = "0.1.0"
+description = "Reproducible data and modelling utilities for computational metallurgy"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Ahmad Ishamul Ayady Akmal", email = "ishamulayadyakmal@gmail.com" },
+]
+keywords = ["metallurgy", "materials-informatics", "reproducibility"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "pint>=0.23",
+  "pyyaml>=6.0",
+  "pandera>=0.18",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "pre-commit>=3.5",
+]
+
+[project.scripts]
+metalkit = "metalkit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

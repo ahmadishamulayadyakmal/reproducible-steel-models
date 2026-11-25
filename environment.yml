@@ -1,0 +1,18 @@
+name: metallurgy-portfolio
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  # Fortran toolchain: fpm 0.12 (W02 target) with a Fortran 2018 compiler.
+  - gfortran>=11
+  - fpm=0.12
+  # Scientific Python stack declared by pyproject.toml.
+  - numpy>=1.24
+  - pandas>=2.0
+  - pint>=0.23
+  - pyyaml>=6.0
+  - pandera>=0.18
+  - pytest>=7.4
+  - pytest-cov>=4.1
+  - pre-commit>=3.5

@@ -1,0 +1,29 @@
+name = "libthermo"
+version = "0.1.0"
+license = "MIT"
+author = "Ahmad Ishamul Ayady Akmal"
+maintainer = "ishamulayadyakmal@gmail.com"
+description = "Numerical and thermodynamic kernels for the metallurgy portfolio"
+categories = ["science"]
+keywords = ["metallurgy", "cfd", "thermodynamics"]
+
+[library]
+source-dir = "src/fortran/libthermo/src"
+
+[[test]]
+name = "test_libthermo"
+source-dir = "src/fortran/libthermo/test"
+main = "test_libthermo.f90"
+
+[build]
+auto-executables = false
+auto-examples = false
+auto-tests = false
+
+[fortran]
+implicit-typing = false
+implicit-external = false
+source-form = "free"
+
+[install]
+library = true

@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: Computational Metallurgy Portfolio
+message: If you use this software or its benchmark artefacts, please cite it.
+type: software
+version: 0.1.0
+date-released: 2026-11-24
+license: MIT
+authors:
+  - family-names: Akmal
+    given-names: Ahmad Ishamul Ayady
+abstract: >-
+  A reproducible ICME portfolio built in 52 weekly sprints: open metallurgy
+  data, machine learning, self-written modern Fortran solvers, and explicit
+  verification and validation against journal and experimental benchmarks.
+keywords:
+  - metallurgy
+  - materials-informatics
+  - icme
+  - cfd
+  - fortran
+  - machine-learning
+  - verification-and-validation

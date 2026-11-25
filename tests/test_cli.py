@@ -1,0 +1,28 @@
+"""Smoke tests for the metalkit CLI (W04)."""
+
+import pytest
+
+from metalkit import __version__
+from metalkit.cli import main
+
+
+def test_version_is_exposed():
+    assert __version__
+
+
+def test_help_exits_successfully(capsys):
+    with pytest.raises(SystemExit) as excinfo:
+        main(["--help"])
+
+    assert excinfo.value.code == 0
+    output = capsys.readouterr().out
+    assert "usage: metalkit" in output
+    assert "metallurgy" in output
+
+
+def test_info_prints_version_and_schedule(capsys):
+    assert main(["info"]) == 0
+
+    output = capsys.readouterr().out
+    assert f"metalkit {__version__}" in output
+    assert "52 weekly sprints" in output
