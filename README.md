@@ -33,9 +33,10 @@ Open data only: UCI Steel Plates Faults (D01, CC BY 4.0) and MatBench `matbench_
 - **D04** — MatBench data/version pinning.
 
 Each reference above is listed with its DOI or stable URL, access status and
-manual download route in [`JOURNALS.md`](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/JOURNALS.md) §4, and in the shared
-BibTeX library `papers/references.bib`. Do not cite a paper you have not been
-able to obtain; if it is inaccessible, record that in `JOURNALS.md` §8.
+manual download route in [`JOURNALS.md` §4](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/JOURNALS.md). The shared BibTeX library lives in
+[`metallurgy-evidence-audit/papers/references.bib`](https://github.com/ahmadishamulayadyakmal/metallurgy-evidence-audit/blob/main/papers/references.bib).
+Do not cite a paper you have not been able to obtain; if it is inaccessible, record
+that in [`JOURNALS.md` §8](https://github.com/ahmadishamulayadyakmal/metallurgy-project/blob/main/JOURNALS.md).
 
 ## Deliverables
 
