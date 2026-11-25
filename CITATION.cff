@@ -2,8 +2,8 @@ cff-version: 1.2.0
 title: Computational Metallurgy Portfolio
 message: If you use this software or its benchmark artefacts, please cite it.
 type: software
-version: 0.1.0
-date-released: 2026-11-24
+version: 0.3.0
+date-released: 2026-11-25
 license: MIT
 authors:
   - family-names: Akmal

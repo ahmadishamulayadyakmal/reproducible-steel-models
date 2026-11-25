@@ -42,9 +42,19 @@
 - Added `docs/results.md`, the README `## Case result (C01)` section and
   `docs/figures/c01_scorecard.svg`, rendered by `metalkit report` from the
   committed `results/metrics.json`.
-- Current `main` has 12 passing Python tests. The `c01` tag intentionally stays
-  at the earlier 10-test clean-state release commit; the addendum changes
-  presentation only, not any measured metric.
+- At that point `main` had 12 passing Python tests. The `c01` tag intentionally
+  stayed at the earlier 10-test clean-state release commit; that addendum
+  changed presentation only, not any measured metric.
+
+## Predictive-case addendum (same day)
+
+- Added deterministic RandomForest models, train-only composition vocabulary,
+  five D01 seeds, all five official D04 folds, mean ± std error bars and an
+  explicit adoption gate (≥50% MAE reduction on every fold, mean R² ≥ 0.70).
+- Measured: D01 accuracy **0.6766 ± 0.0075**, macro F1 **0.7526 ± 0.0176**;
+  D04 MAE **89.6300 ± 7.4424 MPa**, R² **0.8141 ± 0.0388**. Gate **passed**.
+- The `c01` tag still marks the reproducibility release; the predictive
+  extension is later on `main`. Current suite: **14 passing Python tests**.
 
 ## What failed / was not completed
 

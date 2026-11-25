@@ -9,18 +9,19 @@ root `README.md`; the master plan, journal list and repository map live in a
 
 - `README.md` — case specification with the six mandatory sections and the
   visible `## Case result (C01)` scorecard
-- [`results.md`](results.md) — what was solved, the five reproduced numbers and
-  what is still needed for a stronger predictive case
+- [`results.md`](results.md) — predictive case verdict, five-fold / five-seed
+  results, adoption gate and remaining gaps
 - [`figures/c01_scorecard.svg`](figures/c01_scorecard.svg) — result figure
   generated from `results/metrics.json`
-- [`reproducibility_audit.md`](reproducibility_audit.md) — C01 closeout: our
-  reproduced numbers vs external literature numbers
+- [`model_card.md`](model_card.md) — actual model card for the RandomForest
+  predictive models
+- [`reproducibility_audit.md`](reproducibility_audit.md) — historical C01
+  reproducibility closeout and external-literature claim boundary
 - [`../data/SOURCES.md`](../data/SOURCES.md) — pinned open datasets and hashes
 - `../results/` — generated metrics and provenance JSON (committed artefacts)
 - `CONTRIBUTING.md` — sprint contract, evidence rules and tag policy
 - `sprints/wNN.md` — sprint note template; copy for each `wNN`
 - `vv_template.md` — verification & validation report template
-- `model_card.md` — model card template for any trained model
 - `.github/` — sprint issue template, PR template and starter CI
 
 ## Before the first sprint

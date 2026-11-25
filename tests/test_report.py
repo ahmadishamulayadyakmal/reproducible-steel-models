@@ -20,24 +20,56 @@ def _sample_metrics() -> dict:
                     "r2": 0.1271,
                 },
             },
+            "uci_faults_random_forest": {
+                "metrics": {
+                    "accuracy": {"mean": 0.6766, "std": 0.0075},
+                    "macro_f1": {"mean": 0.7526, "std": 0.0176},
+                }
+            },
+            "matbench_steels_random_forest": {
+                "metrics": {
+                    "mae_mpa": {"mean": 89.6300, "std": 7.4424},
+                    "rmse_mpa": {"mean": 127.9791, "std": 9.8846},
+                    "r2": {"mean": 0.8141, "std": 0.0388},
+                    "naive_mae_mpa": {"mean": 229.7445, "std": 9.6958},
+                },
+                "decision_gate": {
+                    "passed": True,
+                    "mean_r2": 0.8141,
+                    "mae_reductions": [0.59, 0.61, 0.66, 0.61, 0.58],
+                },
+            },
+        },
+        "summary": {
+            "case_verdict": "predictive gate passed",
+            "decision_gate_passed": True,
+            "d01_random_forest_accuracy": 0.6766,
+            "d01_random_forest_accuracy_std": 0.0075,
+            "d04_random_forest_mae_mpa": 89.6300,
+            "d04_random_forest_mae_std_mpa": 7.4424,
+            "d04_random_forest_r2": 0.8141,
+            "d04_naive_mae_mpa": 229.7445,
+            "external_comparator_mae_mpa": 87.7627,
+            "external_comparator_note": "external literature, not reproduced",
         },
     }
 
 
-def test_scorecard_is_deterministic_and_shows_metrics():
+def test_scorecard_is_deterministic_and_shows_predictive_metrics():
     first = build_scorecard_svg(_sample_metrics())
     second = build_scorecard_svg(_sample_metrics())
 
     assert first == second
     assert "C01" in first
-    assert "0.5013" in first
-    assert "0.6207" in first
-    assert "220.0009 MPa" in first
-    assert "273.1735 MPa" in first
-    assert "0.1271" in first
-    assert "not reproduced" in first
+    assert "predictive case scorecard" in first
+    assert "0.6766" in first
+    assert "0.7526" in first
+    assert "89.6300 MPa" in first
+    assert "127.9791 MPa" in first
+    assert "0.8141" in first
+    assert "Adoption gate: PASS" in first
     assert "87.7627 MPa" in first
-    assert "0.97" in first
+    assert "not reproduced" in first
 
 
 def test_report_command_writes_svg(tmp_path, capsys):

@@ -6,17 +6,20 @@
 
 ## Case result (C01)
 
-**Verdict:** reproducibility solved, predictive performance not claimed. Our own
-pinned baselines regenerate exactly from public data: D01 accuracy **0.5013** /
-macro F1 **0.6207**, and `matbench_steels` fold 0 MAE **220.0009 MPa** / RMSE
-**273.1735 MPa** / R² **0.1271**. The published MatBench MODNet MAE
-**87.7627 MPa** and Y2R12 R² **> 0.97** stay external literature, explicitly
-**not reproduced** here. No plant data is used.
+**Verdict:** predictive case — adoption gate **PASS** on public data. A
+deterministic RandomForest reaches D01 accuracy **0.6766 ± 0.0075** over five
+seeds and `matbench_steels` MAE **89.6300 ± 7.4424 MPa** with R²
+**0.8141 ± 0.0388** over the five official folds. It beats the train-mean
+predictor (229.7445 ± 9.6958 MPa) by 58–66% on every fold, passing the
+case-specific rule "≥50% MAE reduction every fold and mean R² ≥ 0.70".
+MODNet **87.7627 MPa** and Y2R12 R² **> 0.97** remain external literature,
+**not reproduced**. No plant data is used.
 
-![C01 case scorecard](docs/figures/c01_scorecard.svg)
+![C01 predictive scorecard](docs/figures/c01_scorecard.svg)
 
-Full result, figure provenance and the list of what is still needed for a
-stronger predictive case: [`docs/results.md`](docs/results.md).
+Full tables, leakage control, claim boundary and remaining gaps:
+[`docs/results.md`](docs/results.md). The original reproducibility audit is
+still in [`docs/reproducibility_audit.md`](docs/reproducibility_audit.md).
 
 ## Industrial problem
 
@@ -58,24 +61,31 @@ that in [`JOURNALS.md` §8](https://github.com/ahmadishamulayadyakmal/metallurgy
 
 ## Validation & claims
 
-Our own pinned baselines are reproducible: on D01 (seed 42, stratified 80/20)
-accuracy = **0.5013** and macro F1 = **0.6207**; on `matbench_steels` official
-fold 0, MAE = **220.0009 MPa**, RMSE = **273.1735 MPa** and R² = **0.1271**.
-Each experiment ran twice with identical metrics to four decimals; the full
-suite passes locally (12 tests on `main`; the tagged `c01` release had 10).
-Input checksums, the source fingerprint and the package versions
-are recorded in `results/provenance.json`. The full one-page
-[reproducibility audit](docs/reproducibility_audit.md) lists the published
-numbers that could **not** be reproduced (MatBench MODNet MAE 87.7627 MPa and
-the Y2R12 R² > 0.97 claim), each labelled external literature. Cross-OS
-equality is verified in GitHub Actions on Ubuntu
-and Windows (run `45545998166`); a clean `git archive 0d3d3f1` reproduction
-gave identical metrics and 10 passing tests. The case tag `c01` is applied to
-the release commit.
+The historical pinned baselines still reproduce exactly: D01 seed 42 accuracy
+**0.5013** / macro F1 **0.6207**, and `matbench_steels` fold 0 MAE
+**220.0009 MPa** / RMSE **273.1735 MPa** / R² **0.1271**. The predictive
+extension adds RandomForest results over five seeds and all five official
+folds: D01 accuracy **0.6766 ± 0.0075**, D04 MAE **89.6300 ± 7.4424 MPa** and
+R² **0.8141 ± 0.0388**, passing the documented adoption gate on every fold.
+Every experiment payload is executed twice and must match exactly; the suite
+has 14 passing tests on `main` (the tagged `c01` release had 10).
+Input checksums, the source fingerprint and package versions are recorded in
+`results/provenance.json`. The one-page
+[reproducibility audit](docs/reproducibility_audit.md) remains the historical
+record and lists the published numbers that were **not** reproduced
+(MatBench MODNet MAE 87.7627 MPa and the Y2R12 R² > 0.97 claim). Cross-OS
+equality was previously verified in GitHub Actions run `45545998166` on Ubuntu
+and Windows; a clean `git archive 0d3d3f1` reproduction gave identical metrics
+and 10 passing tests. Tag `c01` remains at that verified release commit; the
+predictive extension is a later commit on `main`.
 
 ## Limitations
 
-No plant data. Only two open datasets are used; a published R2 that we did not reproduce is labelled external literature, never our result.
+No plant data. Only two open datasets are used; a published R2 that we did not
+reproduce is labelled external literature, never our result. The RandomForest
+models are statistical, composition-only, and not calibrated prediction
+intervals; they must not be used for plant release decisions without independent
+data. MODNet / matminer featurization is not reproduced here.
 
 ## Definition of Done
 

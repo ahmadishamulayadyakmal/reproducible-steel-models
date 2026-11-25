@@ -88,6 +88,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "base_commit": commit,
                 "seed": args.seed,
                 "experiments": result["experiments"],
+                "summary": result["summary"],
             },
         )
         write_json(
@@ -98,6 +99,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"base commit {commit} · seed {args.seed} · fold {args.fold}")
         for name, experiment in result["experiments"].items():
             print(f"{name}: {experiment['metrics']}")
+        print(f"case verdict: {result['summary']['case_verdict']}")
         print(f"wrote {output_dir / 'metrics.json'} and {output_dir / 'provenance.json'}")
     elif args.command == "report":
         from metalkit.report import write_scorecard

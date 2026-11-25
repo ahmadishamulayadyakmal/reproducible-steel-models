@@ -1,15 +1,17 @@
 {
-  "base_commit": "37f1b545bd4e4ebb335ce0dfc0198620cf28c82c",
+  "base_commit": "8b019bdf68ef16108456f2422c8d080fb26a320a",
   "experiments": {
     "matbench_steels": {
       "dataset": "D04 matbench_steels (R08)",
       "fold": 0,
       "metrics": {
         "mae_mpa": 220.0009,
+        "naive_mae_mpa": 241.4591,
         "r2": 0.1271,
         "rmse_mpa": 273.1735
       },
       "model": "atomic-fraction composition vector + Ridge(alpha=1.0, cholesky)",
+      "model_id": "ridge",
       "n_features": 14,
       "n_samples": 312,
       "n_test": 63,
@@ -18,13 +20,270 @@
       "split_random_state": 18012019,
       "target_unit": "MPa"
     },
+    "matbench_steels_random_forest": {
+      "dataset": "D04 matbench_steels (R08)",
+      "decision_gate": {
+        "description": "Adopt only if RandomForest MAE is at least 50% lower than the train-mean predictor on every official fold AND mean R2 >= 0.70.",
+        "mae_reductions": [
+          0.5912,
+          0.6114,
+          0.6568,
+          0.6109,
+          0.5798
+        ],
+        "mean_r2": 0.8141,
+        "min_mae_reduction_vs_naive": 0.5,
+        "min_mean_r2": 0.7,
+        "passed": true,
+        "scope": "public D01/D04 data only; no plant validation"
+      },
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "metrics": {
+        "mae_mpa": {
+          "mean": 89.63,
+          "std": 7.4424,
+          "values": [
+            98.7198,
+            85.254,
+            77.5001,
+            93.8577,
+            92.8185
+          ]
+        },
+        "naive_mae_mpa": {
+          "mean": 229.7445,
+          "std": 9.6958,
+          "values": [
+            241.4591,
+            219.377,
+            225.7932,
+            241.2035,
+            220.8898
+          ]
+        },
+        "r2": {
+          "mean": 0.8141,
+          "std": 0.0388,
+          "values": [
+            0.7721,
+            0.8356,
+            0.8382,
+            0.8607,
+            0.7638
+          ]
+        },
+        "rmse_mpa": {
+          "mean": 127.9791,
+          "std": 9.8846,
+          "values": [
+            139.5679,
+            117.1999,
+            116.9214,
+            127.4795,
+            138.7267
+          ]
+        }
+      },
+      "model": "train-fitted atomic-fraction vector + RandomForestRegressor(n_estimators=300, random_state=42)",
+      "model_id": "random_forest",
+      "n_folds": 5,
+      "n_samples": 312,
+      "per_fold": [
+        {
+          "fold": 0,
+          "metrics": {
+            "mae_mpa": 98.7198,
+            "naive_mae_mpa": 241.4591,
+            "r2": 0.7721,
+            "rmse_mpa": 139.5679
+          },
+          "split_fingerprint": "24d9ae1e2baa71a3d359b3d1c5ef1addbebc1a593985aa1e61db60a5c854d744"
+        },
+        {
+          "fold": 1,
+          "metrics": {
+            "mae_mpa": 85.254,
+            "naive_mae_mpa": 219.377,
+            "r2": 0.8356,
+            "rmse_mpa": 117.1999
+          },
+          "split_fingerprint": "bac72ee0570d62482e4233da88690e81f289b663ce3a276321e8c2e38a3f011f"
+        },
+        {
+          "fold": 2,
+          "metrics": {
+            "mae_mpa": 77.5001,
+            "naive_mae_mpa": 225.7932,
+            "r2": 0.8382,
+            "rmse_mpa": 116.9214
+          },
+          "split_fingerprint": "a2fcde2f8672d6571dbbd1b2adf4e17652928a0eeaa0102a25c404472cdeffbc"
+        },
+        {
+          "fold": 3,
+          "metrics": {
+            "mae_mpa": 93.8577,
+            "naive_mae_mpa": 241.2035,
+            "r2": 0.8607,
+            "rmse_mpa": 127.4795
+          },
+          "split_fingerprint": "7c46782f21de68fbd3b427a1e7b8a3abd3ef710345ceb99aa8edbcf89768f3c3"
+        },
+        {
+          "fold": 4,
+          "metrics": {
+            "mae_mpa": 92.8185,
+            "naive_mae_mpa": 220.8898,
+            "r2": 0.7638,
+            "rmse_mpa": 138.7267
+          },
+          "split_fingerprint": "3df242fc097e00f2d181f20c7c3097851e81547410a48078cc54ae218bf62833"
+        }
+      ],
+      "target_unit": "MPa"
+    },
+    "matbench_steels_ridge_folds": {
+      "dataset": "D04 matbench_steels (R08)",
+      "decision_gate": {
+        "description": "Adopt only if RandomForest MAE is at least 50% lower than the train-mean predictor on every official fold AND mean R2 >= 0.70.",
+        "mae_reductions": [
+          0.0889,
+          0.1103,
+          0.1306,
+          0.0882,
+          0.1155
+        ],
+        "mean_r2": 0.1624,
+        "min_mae_reduction_vs_naive": 0.5,
+        "min_mean_r2": 0.7,
+        "passed": false,
+        "scope": "public D01/D04 data only; no plant validation"
+      },
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "metrics": {
+        "mae_mpa": {
+          "mean": 205.36,
+          "std": 11.9359,
+          "values": [
+            220.0009,
+            195.1726,
+            196.3108,
+            219.9409,
+            195.3749
+          ]
+        },
+        "naive_mae_mpa": {
+          "mean": 229.7445,
+          "std": 9.6958,
+          "values": [
+            241.4591,
+            219.377,
+            225.7932,
+            241.2035,
+            220.8898
+          ]
+        },
+        "r2": {
+          "mean": 0.1624,
+          "std": 0.0196,
+          "values": [
+            0.1271,
+            0.1627,
+            0.1701,
+            0.1872,
+            0.165
+          ]
+        },
+        "rmse_mpa": {
+          "mean": 274.2509,
+          "std": 17.3349,
+          "values": [
+            273.1735,
+            264.5011,
+            264.8089,
+            307.9619,
+            260.809
+          ]
+        }
+      },
+      "model": "atomic-fraction composition vector + Ridge(alpha=1.0, cholesky)",
+      "model_id": "ridge",
+      "n_folds": 5,
+      "n_samples": 312,
+      "per_fold": [
+        {
+          "fold": 0,
+          "metrics": {
+            "mae_mpa": 220.0009,
+            "naive_mae_mpa": 241.4591,
+            "r2": 0.1271,
+            "rmse_mpa": 273.1735
+          },
+          "split_fingerprint": "24d9ae1e2baa71a3d359b3d1c5ef1addbebc1a593985aa1e61db60a5c854d744"
+        },
+        {
+          "fold": 1,
+          "metrics": {
+            "mae_mpa": 195.1726,
+            "naive_mae_mpa": 219.377,
+            "r2": 0.1627,
+            "rmse_mpa": 264.5011
+          },
+          "split_fingerprint": "bac72ee0570d62482e4233da88690e81f289b663ce3a276321e8c2e38a3f011f"
+        },
+        {
+          "fold": 2,
+          "metrics": {
+            "mae_mpa": 196.3108,
+            "naive_mae_mpa": 225.7932,
+            "r2": 0.1701,
+            "rmse_mpa": 264.8089
+          },
+          "split_fingerprint": "a2fcde2f8672d6571dbbd1b2adf4e17652928a0eeaa0102a25c404472cdeffbc"
+        },
+        {
+          "fold": 3,
+          "metrics": {
+            "mae_mpa": 219.9409,
+            "naive_mae_mpa": 241.2035,
+            "r2": 0.1872,
+            "rmse_mpa": 307.9619
+          },
+          "split_fingerprint": "7c46782f21de68fbd3b427a1e7b8a3abd3ef710345ceb99aa8edbcf89768f3c3"
+        },
+        {
+          "fold": 4,
+          "metrics": {
+            "mae_mpa": 195.3749,
+            "naive_mae_mpa": 220.8898,
+            "r2": 0.165,
+            "rmse_mpa": 260.809
+          },
+          "split_fingerprint": "3df242fc097e00f2d181f20c7c3097851e81547410a48078cc54ae218bf62833"
+        }
+      ],
+      "target_unit": "MPa"
+    },
     "uci_faults": {
       "dataset": "D01 UCI Steel Plates Faults",
       "metrics": {
         "accuracy": 0.5013,
         "macro_f1": 0.6207
       },
-      "model": "StandardScaler + OneVsRestClassifier(LogisticRegression(max_iter=2000, solver=lbfgs), n_jobs=1)",
+      "model": "StandardScaler + OneVsRestClassifier(LogisticRegression(max_iter=2000, solver=lbfgs, n_jobs=1))",
+      "model_id": "logistic",
       "n_features": 27,
       "n_labels": 7,
       "n_samples": 1941,
@@ -32,7 +291,96 @@
       "n_train": 1552,
       "seed": 42,
       "test_fraction": 0.2
+    },
+    "uci_faults_random_forest": {
+      "dataset": "D01 UCI Steel Plates Faults",
+      "metrics": {
+        "accuracy": {
+          "mean": 0.6766,
+          "std": 0.0075,
+          "values": [
+            0.6761,
+            0.6658,
+            0.6787,
+            0.6889,
+            0.6735
+          ]
+        },
+        "macro_f1": {
+          "mean": 0.7526,
+          "std": 0.0176,
+          "values": [
+            0.7395,
+            0.7363,
+            0.7415,
+            0.764,
+            0.7818
+          ]
+        }
+      },
+      "model": "RandomForestClassifier(n_estimators=300, random_state=42, n_jobs=1)",
+      "model_id": "random_forest",
+      "n_features": 27,
+      "n_labels": 7,
+      "n_runs": 5,
+      "n_samples": 1941,
+      "per_seed": [
+        {
+          "metrics": {
+            "accuracy": 0.6761,
+            "macro_f1": 0.7395
+          },
+          "seed": 42
+        },
+        {
+          "metrics": {
+            "accuracy": 0.6658,
+            "macro_f1": 0.7363
+          },
+          "seed": 7
+        },
+        {
+          "metrics": {
+            "accuracy": 0.6787,
+            "macro_f1": 0.7415
+          },
+          "seed": 11
+        },
+        {
+          "metrics": {
+            "accuracy": 0.6889,
+            "macro_f1": 0.764
+          },
+          "seed": 19
+        },
+        {
+          "metrics": {
+            "accuracy": 0.6735,
+            "macro_f1": 0.7818
+          },
+          "seed": 23
+        }
+      ],
+      "seeds": [
+        42,
+        7,
+        11,
+        19,
+        23
+      ]
     }
   },
-  "seed": 42
+  "seed": 42,
+  "summary": {
+    "case_verdict": "predictive gate passed",
+    "d01_random_forest_accuracy": 0.6766,
+    "d01_random_forest_accuracy_std": 0.0075,
+    "d04_naive_mae_mpa": 229.7445,
+    "d04_random_forest_mae_mpa": 89.63,
+    "d04_random_forest_mae_std_mpa": 7.4424,
+    "d04_random_forest_r2": 0.8141,
+    "decision_gate_passed": true,
+    "external_comparator_mae_mpa": 87.7627,
+    "external_comparator_note": "MatBench MODNet v0.1.12, different model and featurization; quoted as external literature, not reproduced"
+  }
 }

@@ -6,6 +6,12 @@ inputs, a pinned environment and a recorded split? This audit reports only
 **external literature** and are explicitly marked *not reproduced*. Evidence
 level: **A** (public data, our own computation). No plant data was used.
 
+> This is the historical audit attached to tag `c01`. The later predictive
+> extension — RandomForest models, five-seed / five-fold error bars and the
+> adoption gate — is documented in [`results.md`](results.md). Numbers in this
+> audit are the original pinned baselines and are not superseded or silently
+> rewritten.
+
 ## Artefacts and provenance
 
 | Item | Value |

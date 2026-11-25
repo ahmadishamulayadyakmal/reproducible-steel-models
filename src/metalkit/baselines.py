@@ -1,17 +1,21 @@
-"""Deterministic baselines used for the C01 reproducibility audit.
+"""Reproducibility and predictive baselines for the C01 case.
 
-Both experiments are deliberately small: the point of C01 is provenance and
-repeatability, not state-of-the-art accuracy. Published scores are quoted only
-in ``docs/reproducibility_audit.md`` and are never presented as our results.
+The original two experiments remain available as historical baselines. The
+predictive extension adds RandomForest models, multi-seed / multi-fold error
+bars and an explicit, case-specific adoption gate. Published scores are quoted
+only in the documentation and are never presented as our results.
 """
 
 from __future__ import annotations
 
 import hashlib
 import re
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error
 from sklearn.model_selection import train_test_split
@@ -29,46 +33,145 @@ from metalkit.datasets import (
 from metalkit.provenance import environment_info, source_fingerprint
 
 _ELEMENT_TOKEN = re.compile(r"([A-Z][a-z]?)(\d*\.?\d*)")
+PREDICTIVE_SEEDS: tuple[int, ...] = (42, 7, 11, 19, 23)
+OFFICIAL_FOLDS: tuple[int, ...] = (0, 1, 2, 3, 4)
+
+# A case-specific engineering gate, not a published material standard.
+# It is intentionally simple and is evaluated only on public data.
+DECISION_RULE: dict[str, Any] = {
+    "description": (
+        "Adopt only if RandomForest MAE is at least 50% lower than the "
+        "train-mean predictor on every official fold AND mean R2 >= 0.70."
+    ),
+    "min_mae_reduction_vs_naive": 0.50,
+    "min_mean_r2": 0.70,
+    "scope": "public D01/D04 data only; no plant validation",
+}
 
 
-def composition_features(compositions: list[str]) -> tuple[np.ndarray, list[str]]:
-    """Turn composition strings into atomic fractions over a sorted vocabulary.
+def _parse_composition(formula: str) -> dict[str, float]:
+    """Return element -> atomic fraction for one composition string."""
+    amounts: dict[str, float] = {}
+    for symbol, count in _ELEMENT_TOKEN.findall(formula):
+        amount = float(count) if count else 1.0
+        amounts[symbol] = amounts.get(symbol, 0.0) + amount
+    total = sum(amounts.values())
+    if total <= 0.0:
+        raise ValueError(f"Composition has no parseable elements: {formula!r}")
+    return {symbol: amount / total for symbol, amount in amounts.items()}
 
-    ``Fe0.8C0.2`` and ``Fe80C20`` therefore give the same feature vector.
-    The vocabulary is derived only from input formulas, never from the target.
-    """
-    rows: list[dict[str, float]] = []
+
+def composition_vocabulary(compositions: Sequence[str]) -> list[str]:
+    """Return the sorted element vocabulary fitted on training compositions."""
     vocabulary: set[str] = set()
     for formula in compositions:
-        amounts: dict[str, float] = {}
-        for symbol, count in _ELEMENT_TOKEN.findall(formula):
-            amount = float(count) if count else 1.0
-            amounts[symbol] = amounts.get(symbol, 0.0) + amount
-        total = sum(amounts.values())
-        if total <= 0.0:
-            raise ValueError(f"Composition has no parseable elements: {formula!r}")
-        rows.append({symbol: amount / total for symbol, amount in amounts.items()})
-        vocabulary.update(amounts)
+        vocabulary.update(_parse_composition(formula))
+    return sorted(vocabulary)
 
-    elements = sorted(vocabulary)
-    matrix = np.zeros((len(rows), len(elements)), dtype=float)
-    for row_index, row in enumerate(rows):
-        for column_index, element in enumerate(elements):
-            matrix[row_index, column_index] = row.get(element, 0.0)
-    return matrix, elements
+
+def composition_matrix(
+    compositions: Sequence[str], vocabulary: Sequence[str]
+) -> np.ndarray:
+    """Encode compositions using only elements present in a fitted vocabulary.
+
+    Unseen test elements are ignored rather than added, so no information from
+    the test split changes the feature space.
+    """
+    columns = {element: index for index, element in enumerate(vocabulary)}
+    matrix = np.zeros((len(compositions), len(vocabulary)), dtype=float)
+    for row_index, formula in enumerate(compositions):
+        for element, fraction in _parse_composition(formula).items():
+            if element in columns:
+                matrix[row_index, columns[element]] = fraction
+    return matrix
+
+
+def composition_features(compositions: Sequence[str]) -> tuple[np.ndarray, list[str]]:
+    """Fit a vocabulary on the given compositions and encode them.
+
+    Retained for the historical baseline. Predictive runs fit the vocabulary
+    on the training split only and call :func:`composition_matrix`.
+    """
+    vocabulary = composition_vocabulary(compositions)
+    return composition_matrix(compositions, vocabulary), vocabulary
 
 
 def _round_metrics(metrics: dict[str, float]) -> dict[str, float]:
     return {name: round(float(value), 4) for name, value in metrics.items()}
 
 
-def _ids_fingerprint(train_ids: list[str], test_ids: list[str]) -> str:
+def _summary(values: Sequence[float]) -> dict[str, Any]:
+    """Return mean, population standard deviation and rounded raw values."""
+    array = np.asarray(list(values), dtype=float)
+    return {
+        "mean": round(float(array.mean()), 4),
+        "std": round(float(array.std(ddof=0)), 4),
+        "values": [round(float(value), 4) for value in array],
+    }
+
+
+def _ids_fingerprint(train_ids: Sequence[str], test_ids: Sequence[str]) -> str:
     blob = "|".join([*train_ids, *test_ids]).encode("utf-8")
     return hashlib.sha256(blob).hexdigest()
 
 
-def run_uci_faults(data_dir: str | Path, seed: int = 42) -> dict:
-    """Reproduce our own stratified fault-classification baseline on D01."""
+def evaluate_decision_gate(
+    naive_maes: Sequence[float],
+    model_maes: Sequence[float],
+    r2_values: Sequence[float],
+) -> dict[str, Any]:
+    """Apply the case-specific predictive adoption gate."""
+    reductions = [
+        (float(naive) - float(model)) / float(naive)
+        for naive, model in zip(naive_maes, model_maes, strict=True)
+    ]
+    mean_r2 = float(np.mean(list(r2_values)))
+    passed = (
+        all(
+            reduction >= DECISION_RULE["min_mae_reduction_vs_naive"]
+            for reduction in reductions
+        )
+        and mean_r2 >= DECISION_RULE["min_mean_r2"]
+    )
+    return {
+        **DECISION_RULE,
+        "mae_reductions": [round(float(value), 4) for value in reductions],
+        "mean_r2": round(mean_r2, 4),
+        "passed": bool(passed),
+    }
+
+
+def _uci_estimator(model: str, seed: int):
+    if model == "logistic":
+        return make_pipeline(
+            StandardScaler(),
+            OneVsRestClassifier(
+                LogisticRegression(max_iter=2000, solver="lbfgs", random_state=seed),
+                n_jobs=1,
+            ),
+        )
+    if model == "random_forest":
+        return RandomForestClassifier(
+            n_estimators=300, random_state=seed, n_jobs=1
+        )
+    raise ValueError(f"Unknown UCI model {model!r}; use logistic or random_forest")
+
+
+def _uci_model_label(model: str, seed: int) -> str:
+    if model == "logistic":
+        return (
+            "StandardScaler + OneVsRestClassifier(LogisticRegression("
+            "max_iter=2000, solver=lbfgs, n_jobs=1))"
+        )
+    return (
+        f"RandomForestClassifier(n_estimators=300, random_state={seed}, n_jobs=1)"
+    )
+
+
+def run_uci_faults(
+    data_dir: str | Path, seed: int = 42, model: str = "logistic"
+) -> dict:
+    """Run one deterministic D01 fault-classification split."""
     frame = load_uci_faults(Path(data_dir) / DATA_FILES["D01"][0])
     features = frame.iloc[:, :27]
     labels = frame.iloc[:, 27:].to_numpy(dtype=int)
@@ -82,15 +185,9 @@ def run_uci_faults(data_dir: str | Path, seed: int = 42) -> dict:
         shuffle=True,
         stratify=strata,
     )
-    model = make_pipeline(
-        StandardScaler(),
-        OneVsRestClassifier(
-            LogisticRegression(max_iter=2000, solver="lbfgs", random_state=seed),
-            n_jobs=1,
-        ),
-    )
-    model.fit(x_train, y_train)
-    predictions = model.predict(x_test)
+    estimator = _uci_estimator(model, seed)
+    estimator.fit(x_train, y_train)
+    predictions = estimator.predict(x_test)
 
     metrics = _round_metrics(
         {
@@ -100,10 +197,8 @@ def run_uci_faults(data_dir: str | Path, seed: int = 42) -> dict:
     )
     return {
         "dataset": "D01 UCI Steel Plates Faults",
-        "model": (
-            "StandardScaler + OneVsRestClassifier(LogisticRegression("
-            "max_iter=2000, solver=lbfgs), n_jobs=1)"
-        ),
+        "model": _uci_model_label(model, seed),
+        "model_id": model,
         "seed": seed,
         "test_fraction": 0.2,
         "n_samples": int(len(frame)),
@@ -115,12 +210,62 @@ def run_uci_faults(data_dir: str | Path, seed: int = 42) -> dict:
     }
 
 
-def run_matbench_steels(data_dir: str | Path, fold: int = 0) -> dict:
-    """Reproduce our own composition-only Ridge baseline on an official fold."""
+def run_uci_faults_multi(
+    data_dir: str | Path,
+    seeds: Sequence[int] = PREDICTIVE_SEEDS,
+    model: str = "random_forest",
+) -> dict:
+    """Aggregate D01 metrics over several fixed seeds."""
+    runs = [run_uci_faults(data_dir, seed=seed, model=model) for seed in seeds]
+    metric_names = ("accuracy", "macro_f1")
+    return {
+        "dataset": "D01 UCI Steel Plates Faults",
+        "model_id": model,
+        "model": _uci_model_label(model, int(seeds[0])),
+        "seeds": list(seeds),
+        "n_runs": len(runs),
+        "n_samples": runs[0]["n_samples"],
+        "n_features": runs[0]["n_features"],
+        "n_labels": runs[0]["n_labels"],
+        "metrics": {
+            name: _summary([run["metrics"][name] for run in runs])
+            for name in metric_names
+        },
+        "per_seed": [
+            {"seed": run["seed"], "metrics": run["metrics"]} for run in runs
+        ],
+    }
+
+
+def _matbench_estimator(model: str):
+    if model == "ridge":
+        return Ridge(alpha=1.0, solver="cholesky")
+    if model == "random_forest":
+        return RandomForestRegressor(
+            n_estimators=300, random_state=42, n_jobs=1
+        )
+    raise ValueError(
+        f"Unknown MatBench model {model!r}; use ridge or random_forest"
+    )
+
+
+def _matbench_model_label(model: str) -> str:
+    if model == "ridge":
+        return "atomic-fraction composition vector + Ridge(alpha=1.0, cholesky)"
+    return (
+        "train-fitted atomic-fraction vector + RandomForestRegressor("
+        "n_estimators=300, random_state=42)"
+    )
+
+
+def run_matbench_steels(
+    data_dir: str | Path, fold: int = 0, model: str = "ridge"
+) -> dict:
+    """Run one deterministic D04 experiment on an official fold."""
     root = Path(data_dir)
     frame = load_matbench_steels(root / DATA_FILES["D04"][0])
     folds = load_matbench_splits(root / DATA_FILES["D04-splits"][0])
-    if fold not in range(5):
+    if fold not in OFFICIAL_FOLDS:
         raise ValueError(f"fold must be 0..4, got {fold}")
 
     split = folds[f"fold_{fold}"]
@@ -129,59 +274,154 @@ def run_matbench_steels(data_dir: str | Path, fold: int = 0) -> dict:
     train_index = [position[sample_id] for sample_id in train_ids]
     test_index = [position[sample_id] for sample_id in test_ids]
 
-    matrix, elements = composition_features(frame["composition"].tolist())
+    compositions = frame["composition"].tolist()
+    # Fit the feature vocabulary on training formulas only: no test leakage.
+    vocabulary = composition_vocabulary([compositions[i] for i in train_index])
+    matrix = composition_matrix(compositions, vocabulary)
     target = frame["yield_strength_mpa"].to_numpy(dtype=float)
-    model = Ridge(alpha=1.0, solver="cholesky")
-    model.fit(matrix[train_index], target[train_index])
-    predictions = model.predict(matrix[test_index])
-    observed = target[test_index]
 
+    estimator = _matbench_estimator(model)
+    estimator.fit(matrix[train_index], target[train_index])
+    predictions = estimator.predict(matrix[test_index])
+    observed = target[test_index]
     error = predictions - observed
+    naive_mae = mean_absolute_error(
+        observed, np.full(len(observed), target[train_index].mean())
+    )
+
     metrics = _round_metrics(
         {
             "mae_mpa": mean_absolute_error(observed, predictions),
             "rmse_mpa": float(np.sqrt(np.mean(error**2))),
-            "r2": float(1.0 - np.sum(error**2) / np.sum((observed - observed.mean()) ** 2)),
+            "r2": float(
+                1.0 - np.sum(error**2) / np.sum((observed - observed.mean()) ** 2)
+            ),
+            "naive_mae_mpa": naive_mae,
         }
     )
     return {
         "dataset": "D04 matbench_steels (R08)",
-        "model": "atomic-fraction composition vector + Ridge(alpha=1.0, cholesky)",
+        "model": _matbench_model_label(model),
+        "model_id": model,
         "fold": fold,
         "split_random_state": 18012019,
         "split_fingerprint": _ids_fingerprint(train_ids, test_ids),
         "n_samples": int(len(frame)),
         "n_train": int(len(train_index)),
         "n_test": int(len(test_index)),
-        "n_features": len(elements),
+        "n_features": len(vocabulary),
         "target_unit": "MPa",
         "metrics": metrics,
     }
 
 
+def run_matbench_steels_multi(
+    data_dir: str | Path,
+    folds: Sequence[int] = OFFICIAL_FOLDS,
+    model: str = "random_forest",
+) -> dict:
+    """Aggregate D04 metrics over all five official folds."""
+    runs = [run_matbench_steels(data_dir, fold=fold, model=model) for fold in folds]
+    metric_names = ("mae_mpa", "rmse_mpa", "r2", "naive_mae_mpa")
+    gate = evaluate_decision_gate(
+        [run["metrics"]["naive_mae_mpa"] for run in runs],
+        [run["metrics"]["mae_mpa"] for run in runs],
+        [run["metrics"]["r2"] for run in runs],
+    )
+    return {
+        "dataset": "D04 matbench_steels (R08)",
+        "model_id": model,
+        "model": _matbench_model_label(model),
+        "folds": list(folds),
+        "n_folds": len(runs),
+        "n_samples": runs[0]["n_samples"],
+        "target_unit": "MPa",
+        "metrics": {
+            name: _summary([run["metrics"][name] for run in runs])
+            for name in metric_names
+        },
+        "per_fold": [
+            {
+                "fold": run["fold"],
+                "metrics": run["metrics"],
+                "split_fingerprint": run["split_fingerprint"],
+            }
+            for run in runs
+        ],
+        "decision_gate": gate,
+    }
+
+
+def _run_twice(name: str, function, kwargs: dict[str, Any]) -> dict:
+    first = function(**kwargs)
+    second = function(**kwargs)
+    if first != second:
+        raise RuntimeError(
+            f"Non-reproducible payload for {name}: {first!r} != {second!r}"
+        )
+    return first
+
+
 def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
-    """Run each baseline twice; fail unless all metrics match to 4 decimals."""
+    """Run every experiment twice; fail unless all payloads are identical."""
+    data_dir = Path(data_dir)
     data = verify_data_dir(data_dir)
-    experiments = {}
-    for name, function, kwargs in (
-        ("uci_faults", run_uci_faults, {"seed": seed}),
-        ("matbench_steels", run_matbench_steels, {"fold": fold}),
-    ):
-        first = function(data_dir, **kwargs)
-        second = function(data_dir, **kwargs)
-        if first["metrics"] != second["metrics"]:
-            raise RuntimeError(
-                f"Non-reproducible metrics for {name}: {first['metrics']} != "
-                f"{second['metrics']}"
-            )
-        experiments[name] = first
+    experiments: dict[str, Any] = {}
+
+    experiments["uci_faults"] = _run_twice(
+        "uci_faults",
+        run_uci_faults,
+        {"data_dir": data_dir, "seed": seed, "model": "logistic"},
+    )
+    experiments["matbench_steels"] = _run_twice(
+        "matbench_steels",
+        run_matbench_steels,
+        {"data_dir": data_dir, "fold": fold, "model": "ridge"},
+    )
+    experiments["uci_faults_random_forest"] = _run_twice(
+        "uci_faults_random_forest",
+        run_uci_faults_multi,
+        {"data_dir": data_dir, "seeds": PREDICTIVE_SEEDS, "model": "random_forest"},
+    )
+    experiments["matbench_steels_ridge_folds"] = _run_twice(
+        "matbench_steels_ridge_folds",
+        run_matbench_steels_multi,
+        {"data_dir": data_dir, "folds": OFFICIAL_FOLDS, "model": "ridge"},
+    )
+    experiments["matbench_steels_random_forest"] = _run_twice(
+        "matbench_steels_random_forest",
+        run_matbench_steels_multi,
+        {"data_dir": data_dir, "folds": OFFICIAL_FOLDS, "model": "random_forest"},
+    )
+
+    d01 = experiments["uci_faults_random_forest"]["metrics"]
+    d04 = experiments["matbench_steels_random_forest"]["metrics"]
+    gate = experiments["matbench_steels_random_forest"]["decision_gate"]
+    summary = {
+        "case_verdict": (
+            "predictive gate passed" if gate["passed"] else "predictive gate not passed"
+        ),
+        "decision_gate_passed": bool(gate["passed"]),
+        "d01_random_forest_accuracy": d01["accuracy"]["mean"],
+        "d01_random_forest_accuracy_std": d01["accuracy"]["std"],
+        "d04_random_forest_mae_mpa": d04["mae_mpa"]["mean"],
+        "d04_random_forest_mae_std_mpa": d04["mae_mpa"]["std"],
+        "d04_random_forest_r2": d04["r2"]["mean"],
+        "d04_naive_mae_mpa": d04["naive_mae_mpa"]["mean"],
+        "external_comparator_mae_mpa": 87.7627,
+        "external_comparator_note": (
+            "MatBench MODNet v0.1.12, different model and featurization; "
+            "quoted as external literature, not reproduced"
+        ),
+    }
 
     return {
         "seed": seed,
         "fold": fold,
-        "determinism_check": "two consecutive runs, metrics equal to 4 decimals",
+        "determinism_check": "two consecutive runs, all experiment payloads identical",
         "code_fingerprint": source_fingerprint(Path(__file__).parent),
         "data": data,
         "environment": environment_info(),
         "experiments": experiments,
+        "summary": summary,
     }

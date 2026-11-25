@@ -6,19 +6,29 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-11-25 · C01 predictive case
+
 ### Added
 
-- Visible case result: `docs/results.md`, a README `## Case result (C01)`
-  section, and `docs/figures/c01_scorecard.svg` generated from committed
-  metrics.
-- `metalkit report` and a deterministic SVG renderer in `metalkit.report`;
-  `just figures` now regenerates the displayed result.
+- Deterministic RandomForest predictive models for D01 and D04, with five fixed
+  seeds and all five official MatBench folds; mean ± std error bars are written
+  to `results/metrics.json`.
+- Leakage-safe composition encoding: the element vocabulary is fitted on
+  training formulas only and unseen test elements are ignored.
+- An explicit, case-specific adoption gate: ≥50% MAE reduction versus the
+  train-mean predictor on every fold and mean R² ≥ 0.70. The gate passes.
+- An actual [`docs/model_card.md`](docs/model_card.md) for the RandomForest
+  models; predictive tables and claim boundary in `docs/results.md`.
+- `metalkit report`, `docs/figures/c01_scorecard.svg` and the README
+  `## Case result (C01)` section make the result visible in the repository.
 
 ### Changed
 
-- README documentation link now points to the shared BibTeX library in
+- `metalkit reproduce` now writes a `summary` block and five experiment
+  payloads while retaining the historical logistic/Ridge baselines.
+- README documentation link points to the shared BibTeX library in
   `metallurgy-evidence-audit`, not to a non-existent local path.
-- Current Python suite has 12 tests; the tagged `c01` clean-state release had 10.
+- Current Python suite has 14 tests; the tagged `c01` clean-state release had 10.
 
 ## [0.2.0] — 2026-11-25 · C01 closeout
 
