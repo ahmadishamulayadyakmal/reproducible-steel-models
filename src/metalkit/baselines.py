@@ -25,7 +25,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import accuracy_score, f1_score, make_scorer, mean_absolute_error
 from sklearn.model_selection import GridSearchCV, KFold, train_test_split
@@ -58,6 +58,14 @@ NESTED_MATBENCH_PARAM_GRID: dict[str, list[Any]] = {
     "model__max_features": [0.5, 1.0],
     "model__min_samples_leaf": [1, 2, 4],
 }
+
+# Cross-conformal prediction intervals for D04. Calibration residuals come
+# only from out-of-fold predictions on the outer training split; the outer
+# test fold is never used to choose the interval width.
+CONFORMAL_TARGET_COVERAGE = 0.90
+CONFORMAL_ALPHA = round(1.0 - CONFORMAL_TARGET_COVERAGE, 10)
+CONFORMAL_CV_FOLDS = NESTED_MATBENCH_INNER_FOLDS
+CONFORMAL_CV_SEED = 42
 
 # A case-specific engineering gate, not a published material standard.
 # It is intentionally simple and is evaluated only on public data.
@@ -96,6 +104,53 @@ def _grid_size(grid: dict[str, list[Any]]) -> int:
     for values in grid.values():
         size *= len(values)
     return size
+
+
+def _matbench_nested_pipeline() -> Pipeline:
+    """Return a fresh pipeline so cross-fitting clones cannot share fits."""
+    return Pipeline(
+        [
+            ("vectorizer", CompositionVectorizer()),
+            (
+                "model",
+                ExtraTreesRegressor(
+                    n_estimators=300, random_state=42, n_jobs=1
+                ),
+            ),
+        ]
+    )
+
+
+def conformal_half_width(
+    features: np.ndarray,
+    target: np.ndarray,
+    selected_params: dict[str, Any],
+    *,
+    alpha: float = CONFORMAL_ALPHA,
+    n_splits: int = CONFORMAL_CV_FOLDS,
+    seed: int = CONFORMAL_CV_SEED,
+) -> float:
+    """Return a cross-conformal half-width from training data only.
+
+    Out-of-fold absolute residuals are collected with the same K-fold
+    protocol used by the nested search. The empirical quantile index is
+    ``ceil((n + 1) * (1 - alpha))``, clipped to the available residuals.
+    """
+    residuals: list[float] = []
+    splitter = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
+    params = {
+        f"model__{key}": value for key, value in selected_params.items()
+    }
+    for fit_index, calibration_index in splitter.split(features):
+        estimator = clone(_matbench_nested_pipeline()).set_params(**params)
+        estimator.fit(features[fit_index], target[fit_index])
+        predicted = estimator.predict(features[calibration_index])
+        residuals.extend(
+            np.abs(predicted - target[calibration_index]).tolist()
+        )
+    ordered = np.sort(np.asarray(residuals, dtype=float))
+    rank = int(np.ceil((len(ordered) + 1) * (1.0 - alpha)))
+    return float(ordered[max(0, min(rank - 1, len(ordered) - 1))])
 
 
 def _parse_composition(formula: str) -> dict[str, float]:
@@ -554,17 +609,7 @@ def run_matbench_steels_nested(
 
     compositions = np.asarray(frame["composition"].tolist(), dtype=object)
     target = frame["yield_strength_mpa"].to_numpy(dtype=float)
-    pipeline = Pipeline(
-        [
-            ("vectorizer", CompositionVectorizer()),
-            (
-                "model",
-                ExtraTreesRegressor(
-                    n_estimators=300, random_state=42, n_jobs=1
-                ),
-            ),
-        ]
-    )
+    pipeline = _matbench_nested_pipeline()
     search = GridSearchCV(
         pipeline,
         NESTED_MATBENCH_PARAM_GRID,
@@ -595,6 +640,23 @@ def run_matbench_steels_nested(
         }
     )
     vocabulary = search.best_estimator_.named_steps["vectorizer"].vocabulary_
+    selected_params = _selected_params(search)
+    half_width = conformal_half_width(
+        compositions[train_index], target[train_index], selected_params
+    )
+    lower = predictions - half_width
+    upper = predictions + half_width
+    coverage = float(np.mean((observed >= lower) & (observed <= upper)))
+    interval_calibration = {
+        "method": "cross-conformal out-of-fold residuals on the outer training split",
+        "target_coverage": CONFORMAL_TARGET_COVERAGE,
+        "alpha": CONFORMAL_ALPHA,
+        "calibration_folds": CONFORMAL_CV_FOLDS,
+        "calibration_rows": int(len(train_index)),
+        "half_width_mpa": round(float(half_width), 4),
+        "mean_width_mpa": round(float(2.0 * half_width), 4),
+        "empirical_coverage": round(coverage, 4),
+    }
     return {
         "dataset": "D04 matbench_steels (R08)",
         "model": (
@@ -614,8 +676,9 @@ def run_matbench_steels_nested(
         "inner_cv_folds": NESTED_MATBENCH_INNER_FOLDS,
         "inner_cv_scoring": "neg_mean_absolute_error",
         "candidate_count": _grid_size(NESTED_MATBENCH_PARAM_GRID),
-        "selected_params": _selected_params(search),
+        "selected_params": selected_params,
         "inner_cv_best_mae_mpa": round(float(-search.best_score_), 4),
+        "interval_calibration": interval_calibration,
         "metrics": metrics,
     }
 
@@ -649,6 +712,22 @@ def run_matbench_steels_nested_multi(
         "inner_cv_best_mae_mpa": _summary(
             [run["inner_cv_best_mae_mpa"] for run in runs]
         ),
+        "interval_calibration": {
+            "method": runs[0]["interval_calibration"]["method"],
+            "target_coverage": CONFORMAL_TARGET_COVERAGE,
+            "alpha": CONFORMAL_ALPHA,
+            "calibration_folds": CONFORMAL_CV_FOLDS,
+            "calibration_rows": runs[0]["interval_calibration"]["calibration_rows"],
+            "half_width_mpa": _summary(
+                [run["interval_calibration"]["half_width_mpa"] for run in runs]
+            ),
+            "mean_width_mpa": _summary(
+                [run["interval_calibration"]["mean_width_mpa"] for run in runs]
+            ),
+            "empirical_coverage": _summary(
+                [run["interval_calibration"]["empirical_coverage"] for run in runs]
+            ),
+        },
         "per_fold": [
             {
                 "fold": run["fold"],
@@ -656,6 +735,7 @@ def run_matbench_steels_nested_multi(
                 "split_fingerprint": run["split_fingerprint"],
                 "selected_params": run["selected_params"],
                 "inner_cv_best_mae_mpa": run["inner_cv_best_mae_mpa"],
+                "interval_calibration": run["interval_calibration"],
             }
             for run in runs
         ],
@@ -731,6 +811,9 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
     et_d04 = experiments["matbench_steels_extra_trees"]["metrics"]
     nested_u = experiments["uci_faults_nested_extra_trees"]["metrics"]
     nested_d = experiments["matbench_steels_nested_extra_trees"]["metrics"]
+    intervals = experiments["matbench_steels_nested_extra_trees"][
+        "interval_calibration"
+    ]
     gate = experiments["matbench_steels_nested_extra_trees"]["decision_gate"]
     mae_gain_vs_rf = (
         rf_d04["mae_mpa"]["mean"] - nested_d["mae_mpa"]["mean"]
@@ -766,6 +849,15 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
                 "composition vectorizer is cloned and fitted inside each inner "
                 "training split"
             ),
+            "d04_interval_calibration": {
+                "method": intervals["method"],
+                "target_coverage": CONFORMAL_TARGET_COVERAGE,
+                "calibration_folds": CONFORMAL_CV_FOLDS,
+                "leakage_control": (
+                    "out-of-fold residuals come only from the outer training "
+                    "split; the outer test fold sets neither width nor quantile"
+                ),
+            },
         },
         "d01_nested_accuracy": nested_u["accuracy"]["mean"],
         "d01_nested_accuracy_std": nested_u["accuracy"]["std"],
@@ -776,6 +868,11 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
         "d04_nested_rmse_mpa": nested_d["rmse_mpa"]["mean"],
         "d04_nested_r2": nested_d["r2"]["mean"],
         "d04_nested_r2_std": nested_d["r2"]["std"],
+        "d04_interval_target_coverage": CONFORMAL_TARGET_COVERAGE,
+        "d04_interval_empirical_coverage": intervals["empirical_coverage"]["mean"],
+        "d04_interval_empirical_coverage_std": intervals["empirical_coverage"]["std"],
+        "d04_interval_half_width_mpa": intervals["half_width_mpa"]["mean"],
+        "d04_interval_mean_width_mpa": intervals["mean_width_mpa"]["mean"],
         "d01_accuracy_gain_vs_fixed_extra_trees_pp": round(float(d01_gain_pp), 2),
         "d04_mae_improvement_vs_fixed_extra_trees": round(float(mae_gain_vs_et), 4),
         "d01_extra_trees_accuracy": et_d01["accuracy"]["mean"],

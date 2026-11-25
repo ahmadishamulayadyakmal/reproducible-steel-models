@@ -11,7 +11,10 @@ accuracy** and **1.87% lower D04 MAE** than fixed ExtraTrees, and 62–68% below
 the train-mean predictor (229.7445 ± 9.6958 MPa) on every fold, passing the
 case-specific rule "≥50% MAE reduction every fold and mean R² ≥ 0.70".
 MODNet **87.7627 MPa** and Y2R12 R² **> 0.97** remain external literature,
-**not reproduced**. No plant data is used.
+**not reproduced**. The D04 model also reports 90% cross-conformal prediction
+intervals calibrated only on training folds: **0.9198 ± 0.0304** empirical
+coverage and **389.0798 ± 30.8096 MPa** mean full width. They are deliberately
+conservative and are not a material release threshold. No plant data is used.
 
 ![C01 predictive scorecard](docs/figures/c01_scorecard.svg)
 
@@ -63,8 +66,9 @@ and now nested-CV ExtraTrees: D01 accuracy **0.7486 ± 0.0072**, D04 MAE
 adoption gate; nested search is 1.87% below fixed ExtraTrees and 13.32% below
 RandomForest on D04 MAE. Inner folds select `max_features` and
 `min_samples_leaf` without touching the outer split. Every experiment payload
-is executed twice and must match exactly; the suite has 17 passing tests on
-`main`.
+is executed twice and must match exactly; the suite has 18 passing tests on
+`main`. Cross-conformal interval calibration reuses the same inner folds on the
+outer training split and never touches the outer test split.
 Input checksums, the source fingerprint and package versions are recorded in
 `results/provenance.json`. The one-page
 [reproducibility audit](docs/reproducibility_audit.md) remains the historical

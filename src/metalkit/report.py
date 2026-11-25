@@ -44,6 +44,9 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
     summary = metrics["summary"]
     nested_u = experiments["uci_faults_nested_extra_trees"]["metrics"]
     nested_d = experiments["matbench_steels_nested_extra_trees"]["metrics"]
+    intervals = experiments["matbench_steels_nested_extra_trees"].get(
+        "interval_calibration"
+    )
     gate = experiments["matbench_steels_nested_extra_trees"]["decision_gate"]
     et_u = experiments["uci_faults_extra_trees"]["metrics"]
     et_d = experiments["matbench_steels_extra_trees"]["metrics"]
@@ -87,6 +90,19 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
                 weight="bold",
                 anchor="end",
             )
+        )
+
+    interval_line = ""
+    if intervals:
+        interval_line = txt(
+            60,
+            608,
+            f"D04 cross-conformal {intervals['target_coverage']:.0%} intervals: "
+            f"{intervals['empirical_coverage']['mean']:.1%} empirical coverage, "
+            f"{_fmt(intervals['mean_width_mpa']['mean'], 1)} MPa mean width "
+            "(calibrated on training folds only).",
+            size=12,
+            fill=_MUTED,
         )
 
     parts: list[str] = [
@@ -218,6 +234,7 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             fill=_AMBER,
             weight="bold",
         ),
+        interval_line,
         txt(
             40,
             642,

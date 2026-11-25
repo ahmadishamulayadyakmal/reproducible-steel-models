@@ -128,5 +128,5 @@
 <text x="972.0" y="495.3" fill="#0f766e" font-size="11" font-weight="normal" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">67.26%</text>
 <text x="972.0" y="642.0" fill="#5b6673" font-size="11" font-weight="normal" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">F4</text>
 <text x="596.0" y="660.0" fill="#5b6673" font-size="11" font-weight="normal" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">Every fold clears the gate; mean R² = 0.8581</text>
-<text x="40.0" y="730.0" fill="#5b6673" font-size="12" font-weight="normal" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">generated from results/metrics.json · base_commit 3020c9968720 · mean ± std over five seeds/folds</text>
+<text x="40.0" y="730.0" fill="#5b6673" font-size="12" font-weight="normal" text-anchor="start" font-family="Segoe UI, Arial, sans-serif">generated from results/metrics.json · base_commit 95c39fef2884 · mean ± std over five seeds/folds</text>
 </svg>

@@ -1,5 +1,5 @@
 {
-  "base_commit": "3020c9968720603d07a687fecd8f7e98843a273b",
+  "base_commit": "95c39fef28849d3e75c81afb04c01558fd87ca52",
   "experiments": {
     "matbench_steels": {
       "dataset": "D04 matbench_steels (R08)",
@@ -186,6 +186,46 @@
       },
       "inner_cv_folds": 4,
       "inner_cv_scoring": "neg_mean_absolute_error",
+      "interval_calibration": {
+        "alpha": 0.1,
+        "calibration_folds": 4,
+        "calibration_rows": 249,
+        "empirical_coverage": {
+          "mean": 0.9198,
+          "std": 0.0304,
+          "values": [
+            0.8889,
+            0.9683,
+            0.9194,
+            0.9355,
+            0.8871
+          ]
+        },
+        "half_width_mpa": {
+          "mean": 194.5399,
+          "std": 15.4048,
+          "values": [
+            184.4957,
+            210.8251,
+            203.4383,
+            204.6713,
+            169.269
+          ]
+        },
+        "mean_width_mpa": {
+          "mean": 389.0798,
+          "std": 30.8096,
+          "values": [
+            368.9913,
+            421.6501,
+            406.8767,
+            409.3427,
+            338.538
+          ]
+        },
+        "method": "cross-conformal out-of-fold residuals on the outer training split",
+        "target_coverage": 0.9
+      },
       "metrics": {
         "mae_mpa": {
           "mean": 77.6894,
@@ -240,6 +280,16 @@
         {
           "fold": 0,
           "inner_cv_best_mae_mpa": 78.9405,
+          "interval_calibration": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "calibration_rows": 249,
+            "empirical_coverage": 0.8889,
+            "half_width_mpa": 184.4957,
+            "mean_width_mpa": 368.9913,
+            "method": "cross-conformal out-of-fold residuals on the outer training split",
+            "target_coverage": 0.9
+          },
           "metrics": {
             "mae_mpa": 90.6403,
             "naive_mae_mpa": 241.4591,
@@ -255,6 +305,16 @@
         {
           "fold": 1,
           "inner_cv_best_mae_mpa": 89.6257,
+          "interval_calibration": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "calibration_rows": 249,
+            "empirical_coverage": 0.9683,
+            "half_width_mpa": 210.8251,
+            "mean_width_mpa": 421.6501,
+            "method": "cross-conformal out-of-fold residuals on the outer training split",
+            "target_coverage": 0.9
+          },
           "metrics": {
             "mae_mpa": 69.8296,
             "naive_mae_mpa": 219.377,
@@ -270,6 +330,16 @@
         {
           "fold": 2,
           "inner_cv_best_mae_mpa": 86.8691,
+          "interval_calibration": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "calibration_rows": 250,
+            "empirical_coverage": 0.9194,
+            "half_width_mpa": 203.4383,
+            "mean_width_mpa": 406.8767,
+            "method": "cross-conformal out-of-fold residuals on the outer training split",
+            "target_coverage": 0.9
+          },
           "metrics": {
             "mae_mpa": 78.7737,
             "naive_mae_mpa": 225.7932,
@@ -285,6 +355,16 @@
         {
           "fold": 3,
           "inner_cv_best_mae_mpa": 89.8328,
+          "interval_calibration": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "calibration_rows": 250,
+            "empirical_coverage": 0.9355,
+            "half_width_mpa": 204.6713,
+            "mean_width_mpa": 409.3427,
+            "method": "cross-conformal out-of-fold residuals on the outer training split",
+            "target_coverage": 0.9
+          },
           "metrics": {
             "mae_mpa": 76.8826,
             "naive_mae_mpa": 241.2035,
@@ -300,6 +380,16 @@
         {
           "fold": 4,
           "inner_cv_best_mae_mpa": 84.8205,
+          "interval_calibration": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "calibration_rows": 250,
+            "empirical_coverage": 0.8871,
+            "half_width_mpa": 169.269,
+            "mean_width_mpa": 338.538,
+            "method": "cross-conformal out-of-fold residuals on the outer training split",
+            "target_coverage": 0.9
+          },
           "metrics": {
             "mae_mpa": 72.3206,
             "naive_mae_mpa": 220.8898,
@@ -876,6 +966,11 @@
     "d04_extra_trees_r2": 0.8566,
     "d04_extra_trees_r2_std": 0.0374,
     "d04_extra_trees_rmse_mpa": 112.0894,
+    "d04_interval_empirical_coverage": 0.9198,
+    "d04_interval_empirical_coverage_std": 0.0304,
+    "d04_interval_half_width_mpa": 194.5399,
+    "d04_interval_mean_width_mpa": 389.0798,
+    "d04_interval_target_coverage": 0.9,
     "d04_mae_improvement_vs_fixed_extra_trees": 0.0187,
     "d04_mae_improvement_vs_random_forest": 0.1332,
     "d04_naive_mae_mpa": 229.7445,
@@ -900,6 +995,12 @@
         "candidate_count": 6,
         "folds": 4,
         "scoring": "neg_mean_absolute_error"
+      },
+      "d04_interval_calibration": {
+        "calibration_folds": 4,
+        "leakage_control": "out-of-fold residuals come only from the outer training split; the outer test fold sets neither width nor quantile",
+        "method": "cross-conformal out-of-fold residuals on the outer training split",
+        "target_coverage": 0.9
       },
       "leakage_control": "GridSearchCV refits only on the outer training split; the composition vectorizer is cloned and fitted inside each inner training split",
       "outer_protocol": "D01: five fixed stratified seeds; D04: five official MatBench folds"

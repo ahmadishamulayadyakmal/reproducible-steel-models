@@ -83,6 +83,20 @@ def _sample_metrics() -> dict:
                     "mean_r2": 0.8581,
                     "mae_reductions": [0.6246, 0.6817, 0.6511, 0.6813, 0.6726],
                 },
+                "interval_calibration": {
+                    "method": "cross-conformal out-of-fold residuals on the outer training split",
+                    "target_coverage": 0.90,
+                    "empirical_coverage": {
+                        "mean": 0.9198,
+                        "std": 0.0304,
+                        "values": [0.8889, 0.9683, 0.9194, 0.9355, 0.8871],
+                    },
+                    "mean_width_mpa": {
+                        "mean": 389.0798,
+                        "std": 30.8096,
+                        "values": [369.0, 421.7, 406.9, 409.3, 338.5],
+                    },
+                },
                 "per_fold": [
                     {
                         "fold": 0,
@@ -182,6 +196,9 @@ def test_scorecard_is_deterministic_and_shows_predictive_metrics():
     assert "+5.50 pp" in first
     assert "87.7627 MPa" in first
     assert "not reproduced" in first
+    assert "90% intervals" in first
+    assert "92.0% empirical coverage" in first
+    assert "389.1 MPa mean width" in first
 
 
 def test_comparison_chart_is_deterministic_and_uses_fold_metrics():

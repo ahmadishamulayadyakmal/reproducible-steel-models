@@ -4,7 +4,7 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.6.0] — 2026-11-25 · Calibrated uncertainty and comparison chart
 
 ### Added
 
@@ -13,6 +13,14 @@ All notable changes to this project are documented here. Format follows
   and the five fold-wise MAE reductions against the 50% gate.
 - `metalkit report --comparison-output` writes the comparison chart beside the
   scorecard by default; `just figures` renders both.
+- Cross-conformal 90% prediction intervals for the D04 nested ExtraTrees model.
+  Out-of-fold residuals come only from each outer training split; the outer
+  test fold never sets the quantile or width. Five-fold empirical coverage is
+  0.9198 ± 0.0304 with mean full width 389.0798 ± 30.8096 MPa; the intervals
+  are reported as calibrated but deliberately conservative.
+- Interval coverage and width are recorded per fold in `results/metrics.json`,
+  summarised in `summary`, documented in the model card and results page, and
+  displayed on the scorecard.
 
 ## [0.5.0] — 2026-11-25 · Nested hyperparameter search
 

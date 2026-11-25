@@ -5,15 +5,18 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from metalkit.baselines import (
+    CONFORMAL_TARGET_COVERAGE,
     CompositionVectorizer,
     NESTED_MATBENCH_PARAM_GRID,
     NESTED_UCI_PARAM_GRID,
     composition_features,
     composition_matrix,
     composition_vocabulary,
+    conformal_half_width,
     evaluate_decision_gate,
     reproduce,
 )
@@ -54,6 +57,22 @@ def test_nested_grids_are_small_and_leakage_safe_keys():
     for grid in (NESTED_UCI_PARAM_GRID, NESTED_MATBENCH_PARAM_GRID):
         assert all(key.startswith("model__") for key in grid)
         assert 1.0 in grid["model__max_features"]
+
+
+def test_conformal_half_width_is_deterministic_and_alpha_responsive():
+    compositions = np.asarray(
+        [f"Fe{80 - index}C{index}Ni10" for index in range(40)], dtype=object
+    )
+    target = np.arange(40, dtype=float) * 2.0
+    params = {"max_features": 1.0, "min_samples_leaf": 1}
+
+    wide = conformal_half_width(compositions, target, params, alpha=0.10)
+    narrow = conformal_half_width(compositions, target, params, alpha=0.50)
+    again = conformal_half_width(compositions, target, params, alpha=0.10)
+
+    assert wide > 0.0
+    assert wide == again
+    assert wide >= narrow
 
 
 def test_decision_gate_requires_every_fold_and_mean_r2():
@@ -114,6 +133,13 @@ def test_reproduce_is_deterministic_and_records_predictive_summary():
         set(entry["selected_params"]) == {"max_features", "min_samples_leaf"}
         for entry in nested_d["per_fold"]
     )
+    intervals = nested_d["interval_calibration"]
+    assert intervals["target_coverage"] == CONFORMAL_TARGET_COVERAGE
+    assert intervals["method"].startswith("cross-conformal")
+    assert 0.0 <= intervals["empirical_coverage"]["mean"] <= 1.0
+    assert intervals["half_width_mpa"]["mean"] > 0.0
+    assert len(intervals["empirical_coverage"]["values"]) == 5
+    assert all("interval_calibration" in row for row in nested_d["per_fold"])
 
     summary = result["summary"]
     assert summary["headline_model"].startswith("Nested-CV ExtraTrees")
@@ -127,3 +153,7 @@ def test_reproduce_is_deterministic_and_records_predictive_summary():
     assert summary["d01_nested_accuracy"] > summary["d01_extra_trees_accuracy"]
     assert summary["d01_accuracy_gain_vs_fixed_extra_trees_pp"] > 0.0
     assert summary["d01_nested_accuracy_std"] >= 0.0
+    assert summary["d04_interval_target_coverage"] == CONFORMAL_TARGET_COVERAGE
+    assert 0.0 <= summary["d04_interval_empirical_coverage"] <= 1.0
+    assert summary["d04_interval_half_width_mpa"] > 0.0
+    assert summary["d04_interval_mean_width_mpa"] > 0.0

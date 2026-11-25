@@ -103,6 +103,26 @@ Observed reductions are 62.46%, 68.17%, 65.11%, 68.13% and 67.26%; mean R² is
 0.8581. The gate therefore **passes**. It is a case-specific engineering rule,
 not a published material standard, and is evaluated only on public data.
 
+### D04 prediction intervals
+
+The nested model now reports 90% cross-conformal intervals. Four-fold
+out-of-fold absolute residuals are collected from the **outer training split**
+with the selected hyperparameters, and the empirical quantile at
+`ceil((n + 1) × 0.90) / n` sets the half-width. The outer test fold never
+contributes to the width or the quantile.
+
+| Quantity | Mean ± std over five official folds |
+|---|---:|
+| Empirical coverage (target 90%) | **0.9198 ± 0.0304** |
+| Interval half-width | **194.5399 ± 15.4048 MPa** |
+| Interval full width | **389.0798 ± 30.8096 MPa** |
+
+Per-fold coverage is 0.8889, 0.9683, 0.9194, 0.9355 and 0.8871. Coverage meets
+the 90% target on average, but the intervals are wide: out-of-fold residuals
+on 249 training rows per fold are much larger than the held-out MAE. This is a
+calibrated uncertainty statement for these public folds, **not** a release
+decision threshold. Finite-sample coverage is not guaranteed for a new alloy.
+
 ## Published numbers that were **not** reproduced
 
 | Source | Published number | Why it is not our result |
@@ -118,9 +138,10 @@ The earlier reproducibility audit, including the exact claim boundary, is in
 1. **MODNet / matminer featurization** (R07) is not installed, so the external
    benchmark is context only, not a like-for-like reproduction.
 2. **No plant data.** The model cannot be claimed validated on industrial
-   measurements; see [`evidence.md`](../case/evidence.md).
-3. **No calibrated intervals.** Mean ± std describes split variability, not a
-   prediction interval for a new alloy.
+   measurements; it is a public-data study only.
+3. **Wide intervals.** Cross-conformal 90% intervals are calibrated on the
+   public folds but average ~389 MPa wide; they do not support a material
+   release decision.
 4. **Small public dataset.** 312 steels and a composition-only descriptor limit
    extrapolation outside the observed composition range.
 5. **No physics constraints.** The model is statistical, not CALPHAD- or
