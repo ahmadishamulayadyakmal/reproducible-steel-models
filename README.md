@@ -6,13 +6,14 @@
 
 ## Case result (C01)
 
-**Verdict:** predictive case — adoption gate **PASS** with an improved
-deterministic ExtraTrees ensemble. D01 accuracy is **0.6936 ± 0.0114** over
-five seeds; `matbench_steels` MAE is **79.1707 ± 8.6980 MPa** with R²
-**0.8566 ± 0.0374** over the five official folds. That is **11.67% lower MAE**
-than the retained RandomForest comparator and 62–69% below the train-mean
-predictor (229.7445 ± 9.6958 MPa) on every fold, passing the case-specific
-rule "≥50% MAE reduction every fold and mean R² ≥ 0.70".
+**Verdict:** predictive case — adoption gate **PASS** with nested hyperparameter
+search. Inner CV selects the ExtraTrees settings using training data only;
+D01 accuracy is **0.7486 ± 0.0072** over five seeds (macro F1 **0.8114 ±
+0.0164**), and `matbench_steels` MAE is **77.6894 ± 7.2132 MPa** with R²
+**0.8581 ± 0.0398** over the five official folds. That is **5.50 pp more D01
+accuracy** and **1.87% lower D04 MAE** than fixed ExtraTrees, and 62–68% below
+the train-mean predictor (229.7445 ± 9.6958 MPa) on every fold, passing the
+case-specific rule "≥50% MAE reduction every fold and mean R² ≥ 0.70".
 MODNet **87.7627 MPa** and Y2R12 R² **> 0.97** remain external literature,
 **not reproduced**. No plant data is used.
 
@@ -66,12 +67,15 @@ The historical pinned baselines still reproduce exactly: D01 seed 42 accuracy
 **0.5013** / macro F1 **0.6207**, and `matbench_steels` fold 0 MAE
 **220.0009 MPa** / RMSE **273.1735 MPa** / R² **0.1271**. The predictive
 extension adds RandomForest results over five seeds and all five official
-folds (D01 accuracy **0.6766 ± 0.0075**, D04 MAE **89.6300 ± 7.4424 MPa**)
-and then improves them with ExtraTrees: D01 accuracy **0.6936 ± 0.0114**, D04
-MAE **79.1707 ± 8.6980 MPa**, R² **0.8566 ± 0.0374**. Both pass the adoption
-gate; the ExtraTrees MAE is 11.67% lower than RandomForest. Every experiment
-payload is executed twice and must match exactly; the suite has 14 passing
-tests on `main` (the tagged `c01` release had 10).
+folds (D01 accuracy **0.6766 ± 0.0075**, D04 MAE **89.6300 ± 7.4424 MPa**),
+then fixed ExtraTrees (D01 **0.6936 ± 0.0114**, D04 **79.1707 ± 8.6980 MPa**),
+and now nested-CV ExtraTrees: D01 accuracy **0.7486 ± 0.0072**, D04 MAE
+**77.6894 ± 7.2132 MPa**, R² **0.8581 ± 0.0398**. Each stage passes the
+adoption gate; nested search is 1.87% below fixed ExtraTrees and 13.32% below
+RandomForest on D04 MAE. Inner folds select `max_features` and
+`min_samples_leaf` without touching the outer split. Every experiment payload
+is executed twice and must match exactly; the suite has 16 passing tests on
+`main` (the tagged `c01` release had 10).
 Input checksums, the source fingerprint and package versions are recorded in
 `results/provenance.json`. The one-page
 [reproducibility audit](docs/reproducibility_audit.md) remains the historical
@@ -79,18 +83,20 @@ record and lists the published numbers that were **not** reproduced
 (MatBench MODNet MAE 87.7627 MPa and the Y2R12 R² > 0.97 claim). Cross-OS
 equality was previously verified in GitHub Actions run `45545998166` on Ubuntu
 and Windows; a clean `git archive 0d3d3f1` reproduction gave identical metrics
-and 10 passing tests. Tag `c01` remains at that verified release commit;
-`c01-predictive` marks the first predictive release, and this ExtraTrees
-improvement is a later commit on `main`.
+and 10 passing tests. Tags `c01`, `c01-predictive` and `c01-extra-trees` remain
+at their verified release commits; this nested-search improvement is tagged
+`c01-nested-search` and does not move them.
 
 ## Limitations
 
 No plant data. Only two open datasets are used; a published R2 that we did not
 reproduce is labelled external literature, never our result. The RandomForest
-and ExtraTrees models are statistical, composition-only, and not calibrated
-prediction intervals; they must not be used for plant release decisions without
-independent data. MODNet / matminer featurization is not reproduced here, so the
-numerically lower ExtraTrees MAE is not a like-for-like benchmark win.
+and nested / fixed ExtraTrees models are statistical, composition-only, and not
+calibrated prediction intervals; they must not be used for plant release
+decisions without independent data. MODNet / matminer featurization is not
+reproduced here, so the numerically lower nested MAE is not a like-for-like
+benchmark win. The nested grid is deliberately small and auditable, not an
+exhaustive optimizer run.
 
 ## Definition of Done
 

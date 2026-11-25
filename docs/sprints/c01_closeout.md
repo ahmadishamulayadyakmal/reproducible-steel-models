@@ -67,6 +67,21 @@
   not advertised as a like-for-like benchmark win because model and
   featurization differ.
 
+## Nested search addendum (same day)
+
+- Added deterministic nested hyperparameter search for D01 and D04. Inner CV
+  runs only on each outer training split (3 folds / macro F1 for D01, 4 folds /
+  MAE for D04); the outer split remains untouched for scoring.
+- D04 composition vectorization became a pipeline step so each inner split
+  refits its own element vocabulary. Selected parameters and inner best scores
+  are recorded per seed and per fold in `results/metrics.json`.
+- Measured: D01 accuracy **0.7486 ± 0.0072**, macro F1 **0.8114 ± 0.0164**;
+  D04 MAE **77.6894 ± 7.2132 MPa**, R² **0.8581 ± 0.0398**. Adoption gate
+  **passed** on all five official folds.
+- Nested search improves D01 accuracy by **5.50 pp** and D04 MAE by **1.87%**
+  versus the fixed ExtraTrees comparator. The suite now has **16 passing
+  Python tests**. This release is tagged `c01-nested-search`.
+
 ## What failed / was not completed
 
 - No MODNet / matminer reproduction: the published MatBench leaderboard MAE

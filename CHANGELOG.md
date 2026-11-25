@@ -6,6 +6,29 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-11-25 · Nested hyperparameter search
+
+### Added
+
+- Leakage-safe nested hyperparameter search for both predictive datasets. Inner
+  CV selects `max_features` and `min_samples_leaf` on the outer training split
+  only; every seed/fold stores its selected parameters and inner best score.
+- `CompositionVectorizer` pipeline step so the D04 element vocabulary is cloned
+  and refitted inside each inner training split.
+- Two new experiment payloads, `uci_faults_nested_extra_trees` and
+  `matbench_steels_nested_extra_trees`, with fixed ExtraTrees retained as a
+  comparator.
+- Updated scorecard, results page and model card showing nested-search metrics.
+
+### Changed
+
+- Headline D01 accuracy improved from 0.6936 to **0.7486**; macro F1 from 0.7755
+  to **0.8114**.
+- Headline D04 MAE improved from 79.1707 to **77.6894 MPa** (1.87% lower);
+  RMSE from 112.0894 to **111.0717 MPa**; R² from 0.8566 to **0.8581**.
+- Adoption gate still passes on all five official folds. Previous tags are not
+  moved; this release is tagged `c01-nested-search`.
+
 ## [0.4.0] — 2026-11-25 · Improved predictive case
 
 ### Added

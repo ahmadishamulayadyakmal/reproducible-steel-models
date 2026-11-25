@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
 
 from metalkit.baselines import (
+    CompositionVectorizer,
+    NESTED_MATBENCH_PARAM_GRID,
+    NESTED_UCI_PARAM_GRID,
     composition_features,
     composition_matrix,
     composition_vocabulary,
@@ -33,6 +37,23 @@ def test_composition_matrix_ignores_unseen_test_elements():
     assert vocabulary == ["C", "Fe"]
     assert matrix.shape == (1, 2)
     assert matrix[0].tolist() == pytest.approx([0.20, 0.79])
+
+
+def test_composition_vectorizer_is_refitted_by_sklearn_cloning():
+    vectorizer = CompositionVectorizer().fit(["Fe80C20"])
+    first = vectorizer.transform(["Fe79C20Ni1"])
+
+    assert first.shape == (1, 2)
+    refitted = CompositionVectorizer().fit(["Fe70C20Ni10"])
+    assert refitted.transform(["Fe69C20Ni10Cu1"]).shape == (1, 3)
+
+
+def test_nested_grids_are_small_and_leakage_safe_keys():
+    assert len(NESTED_UCI_PARAM_GRID) == 2
+    assert len(NESTED_MATBENCH_PARAM_GRID) == 2
+    for grid in (NESTED_UCI_PARAM_GRID, NESTED_MATBENCH_PARAM_GRID):
+        assert all(key.startswith("model__") for key in grid)
+        assert 1.0 in grid["model__max_features"]
 
 
 def test_decision_gate_requires_every_fold_and_mean_r2():
@@ -66,23 +87,43 @@ def test_reproduce_is_deterministic_and_records_predictive_summary():
         "matbench_steels_random_forest",
         "uci_faults_extra_trees",
         "matbench_steels_extra_trees",
+        "uci_faults_nested_extra_trees",
+        "matbench_steels_nested_extra_trees",
     }
     for experiment in result["experiments"].values():
         assert "n_samples" in experiment
         assert any(
             key in experiment for key in ("n_train", "n_runs", "n_folds")
         )
+        json.dumps(experiment)
         for payload in experiment["metrics"].values():
             if isinstance(payload, dict):
                 assert set(payload) == {"mean", "std", "values"}
             else:
                 assert round(payload, 4) == payload
 
+    nested_u = result["experiments"]["uci_faults_nested_extra_trees"]
+    nested_d = result["experiments"]["matbench_steels_nested_extra_trees"]
+    assert nested_u["candidate_count"] == 4
+    assert nested_d["candidate_count"] == 6
+    assert all(
+        set(entry["selected_params"]) == {"max_features", "min_samples_leaf"}
+        for entry in nested_u["per_seed"]
+    )
+    assert all(
+        set(entry["selected_params"]) == {"max_features", "min_samples_leaf"}
+        for entry in nested_d["per_fold"]
+    )
+
     summary = result["summary"]
-    assert summary["headline_model"].startswith("ExtraTrees")
+    assert summary["headline_model"].startswith("Nested-CV ExtraTrees")
     assert summary["decision_gate_passed"] is True
-    assert summary["d04_extra_trees_mae_mpa"] < 0.5 * summary["d04_naive_mae_mpa"]
-    assert summary["d04_extra_trees_r2"] >= 0.70
+    assert summary["nested_search"]["d01_inner_cv"]["folds"] == 3
+    assert summary["nested_search"]["d04_inner_cv"]["folds"] == 4
+    assert summary["d04_nested_mae_mpa"] < 0.5 * summary["d04_naive_mae_mpa"]
+    assert summary["d04_nested_r2"] >= 0.70
+    assert summary["d04_mae_improvement_vs_fixed_extra_trees"] > 0.0
     assert summary["d04_mae_improvement_vs_random_forest"] > 0.0
-    assert summary["d01_extra_trees_accuracy"] > summary["d01_random_forest_accuracy"]
-    assert summary["d01_extra_trees_accuracy_std"] >= 0.0
+    assert summary["d01_nested_accuracy"] > summary["d01_extra_trees_accuracy"]
+    assert summary["d01_accuracy_gain_vs_fixed_extra_trees_pp"] > 0.0
+    assert summary["d01_nested_accuracy_std"] >= 0.0

@@ -9,12 +9,12 @@ root `README.md`; the master plan, journal list and repository map live in a
 
 - `README.md` — case specification with the six mandatory sections and the
   visible `## Case result (C01)` scorecard
-- [`results.md`](results.md) — predictive case verdict, five-fold / five-seed
-  results, adoption gate and remaining gaps
+- [`results.md`](results.md) — predictive case verdict, nested-CV five-fold /
+  five-seed results, adoption gate and remaining gaps
 - [`figures/c01_scorecard.svg`](figures/c01_scorecard.svg) — result figure
   generated from `results/metrics.json`
-- [`model_card.md`](model_card.md) — actual model card for the ExtraTrees
-  headline models and the retained RandomForest comparator
+- [`model_card.md`](model_card.md) — model card for the nested-CV ExtraTrees
+  headline, fixed ExtraTrees and RandomForest comparators
 - [`reproducibility_audit.md`](reproducibility_audit.md) — historical C01
   reproducibility closeout and external-literature claim boundary
 - [`../data/SOURCES.md`](../data/SOURCES.md) — pinned open datasets and hashes

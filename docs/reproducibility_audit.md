@@ -7,9 +7,9 @@ inputs, a pinned environment and a recorded split? This audit reports only
 level: **A** (public data, our own computation). No plant data was used.
 
 > This is the historical audit attached to tag `c01`. The later predictive
-> extension — RandomForest / ExtraTrees models, five-seed / five-fold error
-> bars and the adoption gate — is documented in [`results.md`](results.md).
-> Numbers in this
+> extension — RandomForest / fixed and nested ExtraTrees models, five-seed /
+> five-fold error bars, leakage-safe inner CV and the adoption gate — is
+> documented in [`results.md`](results.md). Numbers in this
 > audit are the original pinned baselines and are not superseded or silently
 > rewritten.
 

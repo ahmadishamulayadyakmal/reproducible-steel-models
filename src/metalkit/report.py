@@ -42,11 +42,11 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
     """Return a deterministic SVG scorecard for the C01 metrics dictionary."""
     experiments = metrics["experiments"]
     summary = metrics["summary"]
+    nested_u = experiments["uci_faults_nested_extra_trees"]["metrics"]
+    nested_d = experiments["matbench_steels_nested_extra_trees"]["metrics"]
+    gate = experiments["matbench_steels_nested_extra_trees"]["decision_gate"]
     et_u = experiments["uci_faults_extra_trees"]["metrics"]
     et_d = experiments["matbench_steels_extra_trees"]["metrics"]
-    gate = experiments["matbench_steels_extra_trees"]["decision_gate"]
-    rf_u = experiments["uci_faults_random_forest"]["metrics"]
-    rf_d = experiments["matbench_steels_random_forest"]["metrics"]
     legacy_u = experiments["uci_faults"]["metrics"]
     legacy_d = experiments["matbench_steels"]["metrics"]
 
@@ -73,12 +73,20 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             f'font-family="Segoe UI, Arial, sans-serif">{escape(value)}</text>'
         )
 
-    def row(y: int, label: str, value: str, accent: str) -> str:
+    def row(y: int, label: str, value: str, accent: str, *, x: int = 60) -> str:
         return (
-            f'<rect x="60" y="{y - 24}" width="400" height="34" rx="6" '
+            f'<rect x="{x}" y="{y - 24}" width="400" height="34" rx="6" '
             f'fill="{_BG}" stroke="{_BORDER}" stroke-width="1"/>'
-            + txt(72, y, label, size=14, fill=_MUTED)
-            + txt(448, y, value, size=14, fill=accent, weight="bold", anchor="end")
+            + txt(x + 12, y, label, size=14, fill=_MUTED)
+            + txt(
+                x + 388,
+                y,
+                value,
+                size=14,
+                fill=accent,
+                weight="bold",
+                anchor="end",
+            )
         )
 
     parts: list[str] = [
@@ -90,7 +98,7 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
         txt(
             40,
             78,
-            "ExtraTrees · public data · 5 seeds / 5 official folds · no plant data",
+            "Nested-CV ExtraTrees · 5 seeds / 5 official folds · inner CV on train only",
             size=14,
             fill=_MUTED,
         ),
@@ -105,15 +113,15 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             fill=_TEAL,
             weight="bold",
         ),
-        row(190, "D01 exact-match accuracy", _stat(et_u["accuracy"]), _TEAL),
-        row(232, "D01 macro F1", _stat(et_u["macro_f1"]), _TEAL),
-        row(274, "D04 yield strength MAE", _stat(et_d["mae_mpa"], " MPa"), _TEAL),
-        row(316, "D04 yield strength RMSE", _stat(et_d["rmse_mpa"], " MPa"), _TEAL),
-        row(358, "D04 yield strength R²", _stat(et_d["r2"]), _TEAL),
+        row(190, "D01 exact-match accuracy", _stat(nested_u["accuracy"]), _TEAL),
+        row(232, "D01 macro F1", _stat(nested_u["macro_f1"]), _TEAL),
+        row(274, "D04 yield strength MAE", _stat(nested_d["mae_mpa"], " MPa"), _TEAL),
+        row(316, "D04 yield strength RMSE", _stat(nested_d["rmse_mpa"], " MPa"), _TEAL),
+        row(358, "D04 yield strength R²", _stat(nested_d["r2"]), _TEAL),
         txt(
             60,
             398,
-            "train-fitted element vocabulary · n_jobs=1 · fixed random_state",
+            "inner CV selects max_features / min_samples_leaf on train only",
             size=12,
             fill=_MUTED,
         ),
@@ -127,32 +135,48 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             fill=_AMBER,
             weight="bold",
         ),
-        row(182, "Logistic D01 accuracy", _fmt(legacy_u["accuracy"]), _MUTED),
+        row(
+            182,
+            "Logistic D01 accuracy",
+            _fmt(legacy_u["accuracy"]),
+            _MUTED,
+            x=520,
+        ),
         row(
             216,
-            "RandomForest D01 accuracy",
-            _fmt(rf_u["accuracy"]["mean"]),
+            "Fixed ExtraTrees D01 accuracy",
+            _fmt(et_u["accuracy"]["mean"]),
             _MUTED,
+            x=520,
         ),
         row(
             250,
             "Ridge D04 MAE (fold 0)",
             f"{_fmt(legacy_d['mae_mpa'])} MPa",
             _MUTED,
+            x=520,
         ),
         row(
             284,
-            "RandomForest D04 MAE",
-            f"{_fmt(rf_d['mae_mpa']['mean'])} MPa",
+            "Fixed ExtraTrees D04 MAE",
+            f"{_fmt(et_d['mae_mpa']['mean'])} MPa",
             _MUTED,
+            x=520,
         ),
         row(
             318,
             "MODNet MAE — external",
             f"{_fmt(summary['external_comparator_mae_mpa'])} MPa",
             _AMBER,
+            x=520,
         ),
-        row(352, "Y2R12 fatigue R² — external", _EXTERNAL_FATIGUE_R2, _AMBER),
+        row(
+            352,
+            "Y2R12 fatigue R² — external",
+            _EXTERNAL_FATIGUE_R2,
+            _AMBER,
+            x=520,
+        ),
         txt(
             520,
             398,
@@ -174,16 +198,16 @@ def build_scorecard_svg(metrics: dict[str, Any]) -> str:
             60,
             526,
             "Requirement: >= 50% on every fold and mean R2 >= 0.70; "
-            f"train-mean MAE {_fmt(et_d['naive_mae_mpa']['mean'])} MPa, "
+            f"train-mean MAE {_fmt(nested_d['naive_mae_mpa']['mean'])} MPa, "
             f"observed mean R2 = {_fmt(gate['mean_r2'])}.",
             size=14,
         ),
         txt(
             60,
             554,
-            f"ExtraTrees improves MAE by {_fmt(summary['d04_mae_improvement_vs_random_forest'] * 100, 1)}% "
-            f"over RandomForest; our {_fmt(summary['d04_extra_trees_mae_mpa'])} MPa "
-            "is not a MODNet reproduction.",
+            f"Nested search: MAE {_fmt(summary['d04_mae_improvement_vs_fixed_extra_trees'] * 100, 1)}% "
+            f"below fixed ExtraTrees; D01 accuracy +{_fmt(summary['d01_accuracy_gain_vs_fixed_extra_trees_pp'], 2)} pp. "
+            f"Our {_fmt(summary['d04_nested_mae_mpa'])} MPa is not a MODNet reproduction.",
             size=14,
         ),
         txt(

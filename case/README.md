@@ -42,9 +42,9 @@ a one-page reproducibility audit showing which published numbers reproduce.
 **Validation.** Same commit, two operating systems, identical metrics to 4
 decimal places; `git archive w04` clean-state reproduction; explicit list of
 published numbers that could **not** be reproduced. The predictive extension
-adds five-seed / five-fold ExtraTrees error bars, a RandomForest comparator and
-a data-derived adoption gate; see `../docs/results.md` for the measured results
-and claim boundary.
+adds five-seed / five-fold ExtraTrees error bars, a RandomForest comparator, a
+data-derived adoption gate and a leakage-safe nested hyperparameter search;
+see `../docs/results.md` for the measured results and claim boundary.
 
 **Acceptance.** `pixi run test` green; provenance manifest lists dataset checksums;
 audit report distinguishes reproduced vs external numbers.
