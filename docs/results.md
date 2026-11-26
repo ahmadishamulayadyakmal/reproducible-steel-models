@@ -1,173 +1,121 @@
-# C01 predictive case results
+# Case 01 — Predictive Modeling Results
 
-**Short answer:** the predictive case now uses **nested hyperparameter search**.
-An inner cross-validation selects `max_features` and `min_samples_leaf` using
-only the outer training split; the untouched outer test split supplies the
-reported score. The case-specific adoption gate still **passes**. This remains
-a public-data screening model, not a plant-validated model and not a
-reproduction of MODNet or the Y2R12 published R².
+**Summary:** Case 01 evaluates **nested-CV ExtraTrees** models on two open steel datasets. An inner cross-validation loop selects `max_features` and `min_samples_leaf` strictly inside each outer training split; the untouched outer test split provides the reported score. The case-specific adoption gate **passes**. This is a reproducible public-data screening study—not a plant-validated release model and not an independent reproduction of MODNet or Agrawal et al. (2014).
 
-## Case verdict
+## Case Verdict
 
 | Item | Result |
 |---|---|
 | Headline model | `ExtraTreesClassifier` / `ExtraTreesRegressor`, `n_estimators=300`, `n_jobs=1`, fixed seeds |
-| Search | D01: 3-fold inner CV, macro F1, 4 candidates; D04: 4-fold inner CV, negative MAE, 6 candidates |
-| Leakage control | Inner CV and the composition vectorizer are fitted inside each outer training split only |
-| Comparators kept | Fixed ExtraTrees (500 trees), RandomForest, Ridge and logistic payloads remain in `results/metrics.json` |
-| Error bars | D01: 5 fixed seeds; D04: 5 official folds, mean ± population std |
-| Adoption gate | **PASS** — MAE at least 50% below train-mean on every fold **and** mean R² ≥ 0.70 |
-| D04 MAE | **77.6894 ± 7.2132 MPa** vs train-mean **229.7445 ± 9.6958 MPa** |
-| D04 R² | **0.8581 ± 0.0398** |
-| D01 accuracy | **0.7486 ± 0.0072** (macro F1 **0.8114 ± 0.0164**) |
-| Gain vs fixed ExtraTrees | D01 accuracy **+5.50 pp**; D04 MAE **1.87% lower** |
+| Nested search | UCI Faults: 3-fold inner CV (macro F1, 4 candidates); MatBench Steels: 4-fold inner CV (negative MAE, 6 candidates) |
+| Leakage control | Inner CV and composition vocabulary (`CompositionVectorizer`) are fitted inside each outer training split only |
+| Comparators retained | Fixed ExtraTrees (500 trees), RandomForest, Ridge, and Logistic payloads remain in `results/metrics.json` |
+| Uncertainty reporting | UCI Faults: 5 fixed seeds; MatBench Steels: 5 official folds (mean ± population SD) |
+| Adoption gate | **PASS** — MAE $\ge 50\%$ below train-mean on every official fold **and** mean $R^2 \ge 0.70$ |
+| MatBench Steels MAE | **77.6894 ± 7.2132 MPa** vs. train-mean **229.7445 ± 9.6958 MPa** |
+| MatBench Steels $R^2$ | **0.8581 ± 0.0398** |
+| UCI Faults accuracy | **0.7486 ± 0.0072** (macro F1 **0.8114 ± 0.0164**) |
+| Gain vs. fixed ExtraTrees | UCI accuracy **+5.50 pp**; MatBench MAE **1.87% lower** |
 | Claim boundary | Public data only. No plant data, no MODNet reproduction, no plant validation. |
 
-![C01 predictive scorecard generated from results/metrics.json](figures/c01_scorecard.svg)
+![Table 1: Case 01 quantitative summary scorecard](figures/c01_scorecard.svg)
 
-![C01 model comparison generated from results/metrics.json](figures/c01_model_comparison.svg)
+![Fig. 1: Case 01 model comparison multi-panel figure](figures/c01_model_comparison.svg)
 
-Both figures are generated from [`../results/metrics.json`](../results/metrics.json)
-by `python -m metalkit.cli report`; no plotting dependency was added. The
-comparison chart shows the D01 accuracy progression, D04 fold-level MAE and R²,
-and the five fold-wise MAE reductions against the 50% gate.
+Both figures are generated deterministically from [`../results/metrics.json`](../results/metrics.json) via `python -m metalkit.cli report` using only the Python standard library.
 
-## Nested-search protocol
+---
 
-1. **Outer split** is untouched for tuning: five stratified 80/20 seeds for D01,
-   five official MatBench folds for D04.
-2. **Inner CV** runs on the outer training rows only: `KFold(shuffle=True)`,
-   3 folds for D01 and 4 folds for D04, fixed `random_state`.
-3. **Grid** is small and fixed: `max_features ∈ {0.5, 1.0}` and
-   `min_samples_leaf ∈ {1, 2}` for D01; `max_features ∈ {0.5, 1.0}` and
-   `min_samples_leaf ∈ {1, 2, 4}` for D04.
-4. **Selection** uses macro F1 for multi-label D01 and MAE for D04.
-5. **Refit** happens on the full outer training split, then one prediction is
-   made on the outer test split. Every payload is executed twice and must match
-   exactly.
+## Nested Cross-Validation Protocol
 
-For D04 the `CompositionVectorizer` is a pipeline step, so scikit-learn clones
-and refits the element vocabulary on each inner training split. An inner
-validation composition cannot change the feature space it is scored on. The
-outer test composition never enters the vocabulary.
+1. **Outer split** is never touched during tuning: five stratified 80/20 seeds for UCI Steel Plates Faults, and the five official MatBench folds for `matbench_steels`.
+2. **Inner CV** runs strictly on outer training rows: `KFold(shuffle=True)` with 3 folds (UCI Faults) and 4 folds (MatBench Steels) and fixed `random_state`.
+3. **Hyperparameter grid** is compact and auditable: `max_features ∈ {0.5, 1.0}` and `min_samples_leaf ∈ {1, 2}` for UCI Faults; `max_features ∈ {0.5, 1.0}` and `min_samples_leaf ∈ {1, 2, 4}` for MatBench Steels.
+4. **Selection criterion** uses macro F1 for multi-label UCI Faults and negative MAE for MatBench Steels.
+5. **Refit & verification:** The selected configuration is refitted on the full outer training split and scored once on the outer test split. Every experiment payload is executed twice consecutively and must match identically.
 
-`results/metrics.json` records `selected_params` and the inner best score for
-every seed/fold, so the search is auditable rather than a single opaque score.
+For `matbench_steels`, `CompositionVectorizer` is a scikit-learn pipeline step so the element vocabulary is cloned and refitted inside each inner training fold. Neither inner validation nor outer test compositions can alter the feature space. `results/metrics.json` stores `selected_params` and inner best scores for every seed and fold.
 
-## Predictive results — our numbers (evidence A)
+---
 
-### D01 · UCI Steel Plates Faults
+## Reproduced Results (Open Data, Our Computation)
 
-Protocol: 27 features, 7 multi-hot fault labels, stratified 80/20 split,
-five fixed seeds `(42, 7, 11, 19, 23)`, exact-match accuracy and macro F1.
+### 1. UCI Steel Plates Faults
 
-| Model | Accuracy | Macro F1 | Note |
-|---|---|---|---|
-| Logistic baseline (seed 42) | 0.5013 | 0.6207 | historical reproducibility baseline |
-| RandomForest (5 seeds) | 0.6766 ± 0.0075 | 0.7526 ± 0.0176 | first predictive model |
-| Fixed ExtraTrees, 500 trees (5 seeds) | 0.6936 ± 0.0114 | 0.7755 ± 0.0219 | fixed-setting comparator |
-| **Nested ExtraTrees, 300 trees** | **0.7486 ± 0.0072** | **0.8114 ± 0.0164** | current headline model |
+Protocol: 1,941 plates, 27 numeric features, 7 multi-hot fault labels, stratified 80/20 split over five fixed seeds `(42, 7, 11, 19, 23)`.
 
-The inner search selects `max_features=1.0` and `min_samples_leaf=1` on every
-seed; the fixed ExtraTrees classifier uses scikit-learn's default
-`max_features="sqrt"`. This selection, made without touching the test split,
-explains most of the D01 gain. Inner best macro F1 values are
-0.7814, 0.8017, 0.7946, 0.7915 and 0.7697.
+| Model | Exact-Match Accuracy | Macro F1 | Role |
+|---|---:|---:|---|
+| Logistic baseline (seed 42) | 0.5013 | 0.6207 | Historical reproducibility baseline |
+| RandomForest (5 seeds) | 0.6766 ± 0.0075 | 0.7526 ± 0.0176 | First predictive ensemble |
+| Fixed ExtraTrees, 500 trees (5 seeds) | 0.6936 ± 0.0114 | 0.7755 ± 0.0219 | Fixed-hyperparameter comparator |
+| **Nested ExtraTrees, 300 trees** | **0.7486 ± 0.0072** | **0.8114 ± 0.0164** | **Headline model** |
 
-### D04 · MatBench `matbench_steels`, official five folds
+Inner CV selects `max_features=1.0` and `min_samples_leaf=1` on every seed (versus scikit-learn's default `max_features="sqrt"` in fixed ExtraTrees). Inner best macro F1 values are `0.7814, 0.8017, 0.7946, 0.7915, 0.7697`.
 
-Target: yield strength in MPa. Features are atomic fractions over a vocabulary
-fitted on training formulas only.
+### 2. MatBench `matbench_steels` (Official 5 Folds)
 
-| Fold | Nested MAE (MPa) | RMSE (MPa) | R² | Train-mean MAE (MPa) | MAE reduction | Selected params |
+Target: steel yield strength (MPa). Features: atomic fractions over an element vocabulary fitted strictly on training formulas.
+
+| Fold | Nested MAE (MPa) | RMSE (MPa) | $R^2$ | Train-Mean MAE (MPa) | MAE Reduction | Selected Hyperparameters |
 |---|---:|---:|---:|---:|---:|---|
 | 0 | 90.6403 | 130.7447 | 0.8000 | 241.4591 | 62.46% | `max_features=1.0, min_samples_leaf=1` |
 | 1 | 69.8296 | 94.6921 | 0.8927 | 219.3770 | 68.17% | `max_features=1.0, min_samples_leaf=2` |
 | 2 | 78.7737 | 111.6064 | 0.8526 | 225.7932 | 65.11% | `max_features=0.5, min_samples_leaf=1` |
 | 3 | 76.8826 | 102.1649 | 0.9106 | 241.2035 | 68.13% | `max_features=1.0, min_samples_leaf=2` |
 | 4 | 72.3206 | 116.1503 | 0.8344 | 220.8898 | 67.26% | `max_features=1.0, min_samples_leaf=1` |
-| **Mean ± std** | **77.6894 ± 7.2132** | **111.0717 ± 12.3347** | **0.8581 ± 0.0398** | **229.7445 ± 9.6958** | — | — |
+| **Mean ± SD** | **77.6894 ± 7.2132** | **111.0717 ± 12.3347** | **0.8581 ± 0.0398** | **229.7445 ± 9.6958** | **66.23% mean** | — |
 
-Comparators over the same official folds: fixed ExtraTrees MAE
-**79.1707 ± 8.6980 MPa**, RandomForest **89.6300 ± 7.4424 MPa**, Ridge
-**205.3600 ± 11.9359 MPa**. Nested search lowers MAE by **1.87%** versus fixed
-ExtraTrees and **13.32%** versus RandomForest. Inner best MAE values are
-78.9405, 89.6257, 86.8691, 89.8328 and 84.8205 MPa.
+Comparator scores across the same five official folds:
+- **Fixed ExtraTrees:** MAE **79.1707 ± 8.6980 MPa**, $R^2$ **0.8566 ± 0.0374**
+- **RandomForest:** MAE **89.6300 ± 7.4424 MPa**, $R^2$ **0.8141 ± 0.0388**
+- **Ridge:** MAE **205.3600 ± 11.9359 MPa**, $R^2$ **0.1624 ± 0.0196**
 
-### Adoption gate
+Nested search reduces MAE by **1.87%** vs. fixed ExtraTrees and **13.32%** vs. RandomForest.
 
-> Adopt only if the headline ensemble MAE is at least 50% lower than the
-> train-mean predictor on **every** official fold, and mean R² is at least 0.70.
+### 3. Adoption Gate
 
-Observed reductions are 62.46%, 68.17%, 65.11%, 68.13% and 67.26%; mean R² is
-0.8581. The gate therefore **passes**. It is a case-specific engineering rule,
-not a published material standard, and is evaluated only on public data.
+> Adopt only if the headline ensemble MAE is at least 50% lower than the train-mean predictor on **every** official fold, and mean $R^2 \ge 0.70$.
 
-### D04 prediction intervals
+Observed fold reductions are **62.46%, 68.17%, 65.11%, 68.13%, 67.26%** with mean $R^2 = \mathbf{0.8581}$. The gate **passes**. This is a case-specific engineering benchmark rule on public data, not an industrial material standard.
 
-The nested model now reports 90% cross-conformal intervals. Four-fold
-out-of-fold absolute residuals are collected from the **outer training split**
-with the selected hyperparameters, and the empirical quantile at
-`ceil((n + 1) × 0.90) / n` sets the half-width. The outer test fold never
-contributes to the width or the quantile.
+### 4. Cross-Conformal Prediction Intervals (`matbench_steels`)
 
-| Quantity | Mean ± std over five official folds |
+Four-fold out-of-fold absolute residuals are collected strictly from each **outer training split** using the fold's selected hyperparameters. The empirical quantile at $\lceil (n + 1)(1 - \alpha) \rceil / n$ with $\alpha = 0.10$ sets the symmetric half-width. The outer test fold never influences the quantile or width.
+
+| Quantity | Mean ± SD (5 Official Folds) |
 |---|---:|
 | Empirical coverage (target 90%) | **0.9198 ± 0.0304** |
 | Interval half-width | **194.5399 ± 15.4048 MPa** |
 | Interval full width | **389.0798 ± 30.8096 MPa** |
 
-Per-fold coverage is 0.8889, 0.9683, 0.9194, 0.9355 and 0.8871. Coverage meets
-the 90% target on average, but the intervals are wide: out-of-fold residuals
-on 249 training rows per fold are much larger than the held-out MAE. This is a
-calibrated uncertainty statement for these public folds, **not** a release
-decision threshold. Finite-sample coverage is not guaranteed for a new alloy.
+Per-fold empirical coverage: `0.8889, 0.9683, 0.9194, 0.9355, 0.8871`. Coverage meets the nominal 90% target on average, while the wide interval reflects the small sample size ($n = 249$ training rows per fold) and composition-only features.
 
-## Published numbers that were **not** reproduced
+---
 
-| Source | Published number | Why it is not our result |
+## External Literature Context (Not Reproduced)
+
+| Source | Published Metric | Why It Is Not Our Result |
 |---|---|---|
-| [MatBench leaderboard](https://matbench.materialsproject.org/) · `matbench_steels` | MODNet v0.1.12, **87.7627 MPa MAE** | Different model and matminer featurization. Our 77.6894 MPa is numerically lower, but this is **not** a like-for-like reproduction and must not be advertised as beating a published model without a matched featurization/protocol audit. |
-| Agrawal *et al.* 2014, DOI [10.1186/2193-9772-3-8](https://doi.org/10.1186/2193-9772-3-8) | **R² > 0.97** (~0.98 LOOCV) | The NIMS fatigue dataset (D05) is unavailable here, so the protocol cannot be recomputed. |
+| [MatBench Leaderboard](https://matbench.materialsproject.org/) (Dunn et al., 2020, DOI [10.1038/s41524-020-00406-3](https://doi.org/10.1038/s41524-020-00406-3)) | MODNet v0.1.12, **87.7627 MPa MAE** | Uses a different neural architecture and `matminer` featurization. Our 77.6894 MPa is **not** a like-for-like benchmark reproduction. |
+| Agrawal et al. (2014), DOI [10.1186/2193-9772-3-8](https://doi.org/10.1186/2193-9772-3-8) | **$R^2 > 0.97$** (~0.98 LOOCV, $n = 437$) | The NIMS steel fatigue dataset is not included in this repository, so the protocol cannot be recomputed. |
 
-The earlier reproducibility audit, including the exact claim boundary, is in
-[`reproducibility_audit.md`](reproducibility_audit.md).
+---
 
-## What is still missing
+## Known Limitations
 
-1. **MODNet / matminer featurization** (R07) is not installed, so the external
-   benchmark is context only, not a like-for-like reproduction.
-2. **No plant data.** The model cannot be claimed validated on industrial
-   measurements; it is a public-data study only.
-3. **Wide intervals.** Cross-conformal 90% intervals are calibrated on the
-   public folds but average ~389 MPa wide; they do not support a material
-   release decision.
-4. **Small public dataset.** 312 steels and a composition-only descriptor limit
-   extrapolation outside the observed composition range.
-5. **No physics constraints.** The model is statistical, not CALPHAD- or
-   thermodynamics-informed.
-6. **No repeated nested search over a larger grid.** The current small grid is
-   auditable and cheap; a broader search would need more compute and a fresh
-   clean-state record.
+1. **No `matminer` / MODNet reproduction:** External leaderboard scores are cited strictly as context.
+2. **No industrial plant data:** Results apply only to the two public benchmarks.
+3. **Conservative interval width:** ~389 MPa full width provides calibrated screening uncertainty, not a material release threshold.
+4. **Small composition-only dataset ($n = 312$):** Processing history, heat treatment, and microstructure are absent; extrapolation outside the observed alloy space is unsupported.
+5. **No physics constraints:** Models are purely statistical, without CALPHAD or thermodynamic priors.
 
-## Regenerate the displayed result
+---
+
+## Regenerating Results & Figures
 
 ```bash
 python -m metalkit.cli reproduce --data-dir data/raw --output-dir results
 python -m metalkit.cli report --metrics results/metrics.json
 python -m pytest
 ```
-
-Or with `just`:
-
-```bash
-just reproduce
-just figures
-just test-py
-```
-
-## Claim boundary
-
-All reported results come from public datasets and our own computation. No
-plant data was used. Every number in the "not reproduced" table is quoted from
-external literature and is explicitly not our measured result.

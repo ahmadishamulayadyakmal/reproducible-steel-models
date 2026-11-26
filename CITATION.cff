@@ -1,20 +1,23 @@
 cff-version: 1.2.0
-title: Computational Metallurgy Portfolio
+title: "Reproducible Steel-Property Models (Case 01)"
 message: If you use this software or its benchmark artefacts, please cite it.
 type: software
-version: 0.6.0
-date-released: 2026-11-25
+version: 0.6.1
+date-released: 2026-11-26
 license: MIT
+repository-code: https://github.com/ahmadishamulayadyakmal/reproducible-steel-models
 authors:
   - family-names: Akmal
     given-names: Ahmad Ishamul Ayady
 abstract: >-
-  Open-data metallurgy case study: Computational Metallurgy Portfolio.
+  Open-data computational metallurgy benchmark demonstrating deterministic,
+  leakage-safe machine learning, nested cross-validation, cross-conformal
+  prediction intervals, and SHA-256 data provenance for steel fault
+  classification and yield-strength prediction.
 keywords:
-  - metallurgy
+  - computational-metallurgy
   - materials-informatics
-  - icme
-  - cfd
-  - fortran
-  - machine-learning
+  - reproducibility
+  - conformal-prediction
+  - steel-properties
   - verification-and-validation

@@ -1,28 +1,15 @@
-# Data sources — C01 / E01
+# Open Data Sources — Case 01
 
-All data in this repository is **open**. No plant data is used or stored.
-Raw files are downloaded into `data/raw/` and are **gitignored**; only this
-manifest and the derived, deterministic result JSON files are committed.
+All datasets used in this repository are **publicly available open data**. No plant or proprietary data are stored or used. Raw files are downloaded into `data/raw/` (gitignored); only this manifest and derived deterministic JSON results are committed.
 
-Retrieved on **2026-11-25** by `curl --ssl-no-revoke` (UCI) and the GitHub
-Contents API / `raw.githubusercontent.com` (MatBench). SHA-256 values below
-were computed on the exact bytes downloaded; re-download and compare before
-running the reproducibility experiment.
+| ID | Local File (gitignored) | Upstream Source | SHA-256 | Bytes | Description |
+|---|---|---|---|---:|---|
+| UCI-Faults | `data/raw/steel_plates_faults.zip` | [UCI Steel Plates Faults](https://archive.ics.uci.edu/static/public/198/steel+plates+faults.zip) (DOI [10.24432/C5J88N](https://doi.org/10.24432/C5J88N)) | `cb8eb9859198b63f053e443513036b401746fa517ef58bd17c846c6741c93919` | 100,890 | 1,941 steel plates × 27 features + 7 binary fault labels (`Faults.NNA`, `Faults27x7_var`). Licence: CC BY 4.0. |
+| MatBench-Steels | `data/raw/matbench_steels.json.gz` | [matbench_steels.json.gz](https://github.com/materialsproject/matbench/blob/main/benchmarks/matbench_v0.1_Atomic_Affine_QRF/inputs/matbench_steels.json.gz) | `473bc4957b2ea5e6465aef84bc29bb48ac34db27d69ea4ec5f508745c6fae252` | 8,836 | 312 steel compositions with experimental yield strength (MPa). |
+| MatBench-Splits | `data/raw/steels_splits.json` | [steels_splits.json](https://github.com/materialsproject/matbench/blob/main/benchmarks/matbench_v0.1_Atomic_Affine_QRF/inputs/steels_splits.json) | `ef3bc6cf09ec08a23a8d0a6f1e04c0e2108296644d5e522abd8900f55e2b1a4f` | 42,676 | Official MatBench 5-fold CV splits (`random_state=18012019`, `shuffle=true`). |
 
-| ID | Local file (gitignored) | Upstream URL | SHA-256 | Bytes | Purpose |
-|---|---|---|---|---|---|
-| D01 | `data/raw/steel_plates_faults.zip` | [UCI Steel Plates Faults](https://archive.ics.uci.edu/static/public/198/steel+plates+faults.zip), DOI [10.24432/C5J88N](https://doi.org/10.24432/C5J88N) | `cb8eb9859198b63f053e443513036b401746fa517ef58bd17c846c6741c93919` | 100890 | Deterministic fault-classification baseline; provenance demo. Contains `Faults.NNA` (1941 rows × 27 features + 7 binary fault labels) and `Faults27x7_var` (variable names). Licence: CC BY 4.0. |
-| D04 | `data/raw/matbench_steels.json.gz` | [matbench_v0.1_Atomic_Affine_QRF/inputs/matbench_steels.json.gz](https://github.com/materialsproject/matbench/blob/main/benchmarks/matbench_v0.1_Atomic_Affine_QRF/inputs/matbench_steels.json.gz) | `473bc4957b2ea5e6465aef84bc29bb48ac34db27d69ea4ec5f508745c6fae252` | 8836 | `matbench_steels` yield-strength baseline: 312 compositions, target in MPa. Declared by R08 / D04. |
-| D04-splits | `data/raw/steels_splits.json` | [matbench_v0.1_Atomic_Affine_QRF/inputs/steels_splits.json](https://github.com/materialsproject/matbench/blob/main/benchmarks/matbench_v0.1_Atomic_Affine_QRF/inputs/steels_splits.json) | `ef3bc6cf09ec08a23a8d0a6f1e04c0e2108296644d5e522abd8900f55e2b1a4f` | 42676 | Official MatBench five-fold split (`random_state=18012019`, `shuffle=true`). IDs `mb-steels-NNN` map to zero-based row `NNN-1`. |
+## Integrity & Provenance Rules
 
-## Integrity and claim rules
-
-- `metalkit reproduce` recomputes all three SHA-256 values and refuses to run
-  if a downloaded file differs from this table. It writes the verified hashes
-  into `results/provenance.json`.
-- Numbers produced from D01 and D04 are **our own**, computed from public data.
-- Published scores quoted in `docs/reproducibility_audit.md` (MatBench
-  leaderboard, Y2R12) are **external literature**, not our results. They were
-  obtained with different models/featurization and are marked *not reproduced*.
-- Publisher PDFs are never committed. Dataset licences and citation rules are
-  recorded here; external literature is cited by DOI.
+- `metalkit reproduce` recomputes all three SHA-256 digests and aborts immediately on any mismatch.
+- Verified hashes, Python source fingerprints, and package versions are written to `results/provenance.json`.
+- Published literature benchmarks (MatBench leaderboard; Agrawal et al., 2014) are cited by DOI as external context and are never presented as locally reproduced metrics.

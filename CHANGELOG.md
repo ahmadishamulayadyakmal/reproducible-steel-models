@@ -4,6 +4,20 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] — 2026-11-26 · Springer-style publication figures & public documentation cleanup
+
+### Fixed
+
+- Fixed a bug in `metalkit.report.build_comparison_svg` where the Logistic baseline accuracy bar plotted `0.0000` instead of `0.5013`.
+- Resolved a contradiction in `README.md` regarding cross-conformal prediction interval calibration and removed unused tool references (`XGBoost`, `MLflow`).
+- Removed duplicate dictionary key in `tests/test_report.py`.
+
+### Changed
+
+- Redesigned `c01_scorecard.svg` (`Table 1`) and `c01_model_comparison.svg` (`Fig. 1`) in a clean Springer Nature / academic journal style (white canvas, booktabs horizontal rules, hairline axes, lowercase bold panel labels `a`–`d`, and colorblind-safe scientific palette).
+- Replaced opaque internal tracking codes across `README.md`, `docs/results.md`, `docs/model_card.md`, `docs/reproducibility_audit.md`, and `data/SOURCES.md` with full academic citations and clear public-facing explanations.
+- Updated `CITATION.cff` metadata to reflect Case 01 (`reproducible-steel-models`).
+
 ## [0.6.0] — 2026-11-25 · Calibrated uncertainty and comparison chart
 
 ### Added

@@ -1,4 +1,4 @@
-"""Tests for the deterministic C01 result scorecard."""
+"""Tests for the deterministic Case 01 publication-style SVG figures."""
 
 import json
 
@@ -150,7 +150,6 @@ def _sample_metrics() -> dict:
             "d01_extra_trees_macro_f1": 0.7755,
             "d01_extra_trees_macro_f1_std": 0.0219,
             "d01_random_forest_accuracy": 0.6766,
-            "d01_extra_trees_accuracy": 0.6936,
             "d01_nested_accuracy": 0.7486,
             "d01_nested_accuracy_std": 0.0072,
             "d01_nested_macro_f1": 0.8114,
@@ -181,24 +180,23 @@ def test_scorecard_is_deterministic_and_shows_predictive_metrics():
     second = build_scorecard_svg(_sample_metrics())
 
     assert first == second
-    assert "C01" in first
-    assert "predictive case scorecard" in first
-    assert "Nested-CV ExtraTrees" in first
-    assert "0.7486" in first
-    assert "0.8114" in first
-    assert "77.6894 MPa" in first
-    assert "111.0717 MPa" in first
-    assert "0.8581" in first
-    assert "79.1707 MPa" in first
-    assert "Adoption gate: PASS" in first
-    assert '<rect x="520" y="158"' in first
+    assert "Table 1" in first
+    assert "Case 01" in first
+    assert "Nested ExtraTrees" in first
+    assert "0.7486 ± 0.0072" in first
+    assert "0.8114 ± 0.0164" in first
+    assert "77.6894 ± 7.2132" in first
+    assert "111.0717 ± 12.3347" in first
+    assert "0.8581 ± 0.0398" in first
+    assert "79.1707 ± 8.6980" in first
+    assert "Adoption Gate: PASS" in first
     assert "1.9%" in first
     assert "+5.50 pp" in first
-    assert "87.7627 MPa" in first
-    assert "not reproduced" in first
-    assert "90% intervals" in first
-    assert "92.0% empirical coverage" in first
-    assert "389.1 MPa mean width" in first
+    assert "87.7627 MPa MAE" in first
+    assert "Not Independently Reproduced" in first
+    assert "Cross-conformal 90% PI" in first
+    assert "92.0%" in first
+    assert "389.1 ± 30.8 MPa" in first
 
 
 def test_comparison_chart_is_deterministic_and_uses_fold_metrics():
@@ -206,12 +204,14 @@ def test_comparison_chart_is_deterministic_and_uses_fold_metrics():
     second = build_comparison_svg(_sample_metrics())
 
     assert first == second
-    assert "C01 — model comparison" in first
-    assert "D01 · exact-match accuracy" in first
+    assert "Fig. 1" in first
+    assert "UCI Steel Plates Faults — exact-match accuracy" in first
+    # Regression test: Logistic baseline must plot 0.5013 (not 0.0000)
+    assert "0.5013" in first
     assert "0.7486 ± 0.0072" in first
-    assert "D04 · MAE by official fold" in first
+    assert "MatBench Steels — yield-strength MAE by official fold" in first
     assert "90.6" in first
-    assert "D04 · R² by official fold" in first
+    assert "MatBench Steels — coefficient of determination (R²)" in first
     assert "0.9106" in first
     assert "50% requirement" in first
     assert "62.46%" in first
@@ -225,8 +225,8 @@ def test_report_command_writes_svg(tmp_path, capsys):
 
     assert main(["report", "--metrics", str(metrics_path), "--output", str(output_path)]) == 0
     assert output_path.exists()
-    assert "C01" in output_path.read_text(encoding="utf-8")
+    assert "Table 1" in output_path.read_text(encoding="utf-8")
     comparison = output_path.with_name("c01_model_comparison.svg")
     assert comparison.exists()
-    assert "model comparison" in comparison.read_text(encoding="utf-8")
+    assert "Fig. 1" in comparison.read_text(encoding="utf-8")
     assert "wrote" in capsys.readouterr().out
