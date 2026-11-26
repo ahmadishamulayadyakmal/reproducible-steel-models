@@ -108,6 +108,8 @@ def test_reproduce_is_deterministic_and_records_predictive_summary():
         "matbench_steels_extra_trees",
         "uci_faults_nested_extra_trees",
         "matbench_steels_nested_extra_trees",
+        "uci_faults_multiclass_ensemble",
+        "matbench_steels_physics_hybrid",
     }
     for experiment in result["experiments"].values():
         assert "n_samples" in experiment
@@ -142,8 +144,10 @@ def test_reproduce_is_deterministic_and_records_predictive_summary():
     assert all("interval_calibration" in row for row in nested_d["per_fold"])
 
     summary = result["summary"]
-    assert summary["headline_model"].startswith("Nested-CV ExtraTrees")
+    assert "Soft-Voting Ensemble" in summary["headline_model"]
     assert summary["decision_gate_passed"] is True
+    assert summary["d01_multiclass_accuracy"] > summary["d01_nested_accuracy"]
+    assert summary["d04_adaptive_interval_median_width_mpa"] > 0.0
     assert summary["nested_search"]["d01_inner_cv"]["folds"] == 3
     assert summary["nested_search"]["d04_inner_cv"]["folds"] == 4
     assert summary["d04_nested_mae_mpa"] < 0.5 * summary["d04_naive_mae_mpa"]

@@ -3,7 +3,11 @@
 import json
 
 from metalkit.cli import main
-from metalkit.report import build_comparison_svg, build_scorecard_svg
+from metalkit.report import (
+    build_comparison_svg,
+    build_diagnostics_svg,
+    build_scorecard_svg,
+)
 
 
 def _sample_metrics() -> dict:
@@ -71,6 +75,30 @@ def _sample_metrics() -> dict:
                     "macro_f1": {"mean": 0.8114, "std": 0.0164},
                 }
             },
+            "uci_faults_multiclass_ensemble": {
+                "class_names": [
+                    "Pastry",
+                    "Z_Scratch",
+                    "K_Scatch",
+                    "Stains",
+                    "Dirtiness",
+                    "Bumps",
+                    "Other_Faults",
+                ],
+                "metrics": {
+                    "accuracy": {"mean": 0.8185, "std": 0.0066},
+                    "macro_f1": {"mean": 0.8319, "std": 0.0118},
+                },
+                "confusion_matrix_normalized": [
+                    [0.80, 0.02, 0.01, 0.00, 0.00, 0.07, 0.10],
+                    [0.01, 0.88, 0.01, 0.00, 0.00, 0.02, 0.08],
+                    [0.00, 0.00, 0.94, 0.00, 0.00, 0.01, 0.05],
+                    [0.00, 0.00, 0.00, 0.92, 0.00, 0.02, 0.06],
+                    [0.00, 0.00, 0.00, 0.00, 0.85, 0.05, 0.10],
+                    [0.04, 0.01, 0.01, 0.00, 0.01, 0.78, 0.15],
+                    [0.05, 0.02, 0.02, 0.01, 0.01, 0.12, 0.77],
+                ],
+            },
             "matbench_steels_nested_extra_trees": {
                 "metrics": {
                     "mae_mpa": {"mean": 77.6894, "std": 7.2132},
@@ -86,147 +114,111 @@ def _sample_metrics() -> dict:
                 "interval_calibration": {
                     "method": "cross-conformal out-of-fold residuals on the outer training split",
                     "target_coverage": 0.90,
-                    "empirical_coverage": {
-                        "mean": 0.9198,
-                        "std": 0.0304,
-                        "values": [0.8889, 0.9683, 0.9194, 0.9355, 0.8871],
-                    },
-                    "mean_width_mpa": {
-                        "mean": 389.0798,
-                        "std": 30.8096,
-                        "values": [369.0, 421.7, 406.9, 409.3, 338.5],
-                    },
+                    "empirical_coverage": {"mean": 0.9198, "std": 0.0304},
+                    "mean_width_mpa": {"mean": 389.0798, "std": 30.8096},
                 },
                 "per_fold": [
-                    {
-                        "fold": 0,
-                        "metrics": {
-                            "mae_mpa": 90.6403,
-                            "naive_mae_mpa": 241.4591,
-                            "r2": 0.8000,
-                        },
-                    },
-                    {
-                        "fold": 1,
-                        "metrics": {
-                            "mae_mpa": 69.8296,
-                            "naive_mae_mpa": 219.3770,
-                            "r2": 0.8927,
-                        },
-                    },
-                    {
-                        "fold": 2,
-                        "metrics": {
-                            "mae_mpa": 78.7737,
-                            "naive_mae_mpa": 225.7932,
-                            "r2": 0.8526,
-                        },
-                    },
-                    {
-                        "fold": 3,
-                        "metrics": {
-                            "mae_mpa": 76.8826,
-                            "naive_mae_mpa": 241.2035,
-                            "r2": 0.9106,
-                        },
-                    },
-                    {
-                        "fold": 4,
-                        "metrics": {
-                            "mae_mpa": 72.3206,
-                            "naive_mae_mpa": 220.8898,
-                            "r2": 0.8344,
-                        },
-                    },
+                    {"fold": 0, "metrics": {"mae_mpa": 90.6403, "naive_mae_mpa": 241.4591, "r2": 0.8000}},
+                    {"fold": 1, "metrics": {"mae_mpa": 69.8296, "naive_mae_mpa": 219.3770, "r2": 0.8927}},
+                    {"fold": 2, "metrics": {"mae_mpa": 78.7737, "naive_mae_mpa": 225.7932, "r2": 0.8526}},
+                    {"fold": 3, "metrics": {"mae_mpa": 76.8826, "naive_mae_mpa": 241.2035, "r2": 0.9106}},
+                    {"fold": 4, "metrics": {"mae_mpa": 72.3206, "naive_mae_mpa": 220.8898, "r2": 0.8344}},
+                ],
+            },
+            "matbench_steels_physics_hybrid": {
+                "metrics": {
+                    "mae_mpa": {"mean": 76.9500, "std": 7.1000},
+                    "rmse_mpa": {"mean": 110.2000, "std": 12.1000},
+                    "r2": {"mean": 0.8610, "std": 0.0380},
+                    "naive_mae_mpa": {"mean": 229.7445, "std": 9.6958},
+                },
+                "decision_gate": {
+                    "passed": True,
+                    "mean_r2": 0.8610,
+                    "mae_reductions": [0.6300, 0.6850, 0.6550, 0.6840, 0.6760],
+                },
+                "adaptive_interval": {
+                    "target_coverage": 0.90,
+                    "empirical_coverage": {"mean": 0.9010, "std": 0.0410},
+                    "mean_width_mpa": {"mean": 339.7000, "std": 45.4000},
+                    "median_width_mpa": {"mean": 282.0000, "std": 28.0000},
+                },
+                "parity_points": [
+                    {"fold": 0, "observed_mpa": 1200.0, "predicted_mpa": 1245.0, "half_width_mpa": 140.0},
+                    {"fold": 1, "observed_mpa": 1850.0, "predicted_mpa": 1810.0, "half_width_mpa": 160.0},
+                ],
+                "per_fold": [
+                    {"fold": 0, "metrics": {"mae_mpa": 89.3000, "naive_mae_mpa": 241.4591, "r2": 0.8050}},
+                    {"fold": 1, "metrics": {"mae_mpa": 69.1000, "naive_mae_mpa": 219.3770, "r2": 0.8950}},
+                    {"fold": 2, "metrics": {"mae_mpa": 77.9000, "naive_mae_mpa": 225.7932, "r2": 0.8560}},
+                    {"fold": 3, "metrics": {"mae_mpa": 76.2000, "naive_mae_mpa": 241.2035, "r2": 0.9120}},
+                    {"fold": 4, "metrics": {"mae_mpa": 71.5000, "naive_mae_mpa": 220.8898, "r2": 0.8370}},
                 ],
             },
         },
         "summary": {
-            "headline_model": "Nested-CV ExtraTrees (inner-selected hyperparameters)",
+            "headline_model": "UCI 7-class Ensemble + MatBench Hybrid Physics-ET",
             "case_verdict": "predictive gate passed",
             "decision_gate_passed": True,
-            "d01_extra_trees_accuracy": 0.6936,
-            "d01_extra_trees_accuracy_std": 0.0114,
-            "d01_extra_trees_macro_f1": 0.7755,
-            "d01_extra_trees_macro_f1_std": 0.0219,
-            "d01_random_forest_accuracy": 0.6766,
-            "d01_nested_accuracy": 0.7486,
-            "d01_nested_accuracy_std": 0.0072,
-            "d01_nested_macro_f1": 0.8114,
-            "d01_nested_macro_f1_std": 0.0164,
             "d01_accuracy_gain_vs_fixed_extra_trees_pp": 5.50,
-            "d04_extra_trees_mae_mpa": 79.1707,
-            "d04_extra_trees_mae_std_mpa": 8.6980,
-            "d04_extra_trees_rmse_mpa": 112.0894,
-            "d04_extra_trees_r2": 0.8566,
-            "d04_extra_trees_r2_std": 0.0374,
-            "d04_nested_mae_mpa": 77.6894,
-            "d04_nested_mae_std_mpa": 7.2132,
-            "d04_nested_rmse_mpa": 111.0717,
-            "d04_nested_r2": 0.8581,
-            "d04_nested_r2_std": 0.0398,
+            "d01_multiclass_gain_vs_nested_pp": 6.99,
             "d04_mae_improvement_vs_fixed_extra_trees": 0.0187,
             "d04_mae_improvement_vs_random_forest": 0.1332,
-            "d04_random_forest_mae_mpa": 89.6300,
-            "d04_naive_mae_mpa": 229.7445,
             "external_comparator_mae_mpa": 87.7627,
             "external_comparator_note": "external literature, not reproduced",
         },
     }
 
 
-def test_scorecard_is_deterministic_and_shows_predictive_metrics():
+def test_scorecard_is_deterministic_and_shows_headline_metrics():
     first = build_scorecard_svg(_sample_metrics())
     second = build_scorecard_svg(_sample_metrics())
 
     assert first == second
     assert "Table 1" in first
-    assert "Case 01" in first
-    assert "Nested ExtraTrees" in first
-    assert "0.7486 ± 0.0072" in first
-    assert "0.8114 ± 0.0164" in first
-    assert "77.6894 ± 7.2132" in first
-    assert "111.0717 ± 12.3347" in first
-    assert "0.8581 ± 0.0398" in first
-    assert "79.1707 ± 8.6980" in first
+    assert "0.8185 ± 0.0066" in first
+    assert "0.8319 ± 0.0118" in first
+    assert "76.9500 ± 7.1000" in first
     assert "Adoption Gate: PASS" in first
-    assert "1.9%" in first
-    assert "+5.50 pp" in first
+    assert "Adaptive 90% PI" in first
+    assert "282.0 MPa" in first
     assert "87.7627 MPa MAE" in first
     assert "Not Independently Reproduced" in first
-    assert "Cross-conformal 90% PI" in first
-    assert "92.0%" in first
-    assert "389.1 ± 30.8 MPa" in first
 
 
-def test_comparison_chart_is_deterministic_and_uses_fold_metrics():
+def test_comparison_chart_is_deterministic_and_fixes_logistic_bar():
     first = build_comparison_svg(_sample_metrics())
     second = build_comparison_svg(_sample_metrics())
 
     assert first == second
     assert "Fig. 1" in first
-    assert "UCI Steel Plates Faults — exact-match accuracy" in first
-    # Regression test: Logistic baseline must plot 0.5013 (not 0.0000)
     assert "0.5013" in first
-    assert "0.7486 ± 0.0072" in first
-    assert "MatBench Steels — yield-strength MAE by official fold" in first
-    assert "90.6" in first
-    assert "MatBench Steels — coefficient of determination (R²)" in first
-    assert "0.9106" in first
+    assert "7-Class ET + GBC" in first
+    assert "0.8185 ± 0.0066" in first
+    assert "Hybrid Physics-ET" in first
     assert "50% requirement" in first
-    assert "62.46%" in first
     assert "MODNet" not in first
 
 
-def test_report_command_writes_svg(tmp_path, capsys):
+def test_diagnostics_chart_is_deterministic_and_renders_all_three_panels():
+    first = build_diagnostics_svg(_sample_metrics())
+    second = build_diagnostics_svg(_sample_metrics())
+
+    assert first == second
+    assert "Fig. 2" in first
+    assert "Yield-strength parity" in first
+    assert "Residuals &amp; adaptive 90% PI bounds" in first
+    assert "UCI 7-class confusion matrix" in first
+    assert "Median 90% width = 282.0 MPa" in first
+
+
+def test_report_command_writes_all_three_svgs(tmp_path, capsys):
     metrics_path = tmp_path / "metrics.json"
     metrics_path.write_text(json.dumps(_sample_metrics()), encoding="utf-8")
     output_path = tmp_path / "figures" / "scorecard.svg"
 
     assert main(["report", "--metrics", str(metrics_path), "--output", str(output_path)]) == 0
     assert output_path.exists()
-    assert "Table 1" in output_path.read_text(encoding="utf-8")
-    comparison = output_path.with_name("c01_model_comparison.svg")
-    assert comparison.exists()
-    assert "Fig. 1" in comparison.read_text(encoding="utf-8")
+    assert output_path.with_name("c01_model_comparison.svg").exists()
+    assert output_path.with_name("c01_diagnostics.svg").exists()
     assert "wrote" in capsys.readouterr().out

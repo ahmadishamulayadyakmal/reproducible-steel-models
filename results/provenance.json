@@ -1,6 +1,6 @@
 {
-  "base_commit": "95c39fef28849d3e75c81afb04c01558fd87ca52",
-  "code_fingerprint": "abec0af97aa2363f48f600861bd50da10e0ea954346be3b6fdd596176b992d96",
+  "base_commit": "5e018d98a054c562b56b92dc49d4fafb6c2cd429",
+  "code_fingerprint": "d9c72cec48fc89948b6c4bbf88788e51ad48ac62b0a6621cf05c5f2bbba468e7",
   "data": {
     "D01": {
       "bytes": 100890,
@@ -440,6 +440,2228 @@
       ],
       "target_unit": "MPa"
     },
+    "matbench_steels_physics_hybrid": {
+      "adaptive_interval": {
+        "alpha": 0.1,
+        "calibration_folds": 4,
+        "empirical_coverage": {
+          "mean": 0.9042,
+          "std": 0.0565,
+          "values": [
+            0.7937,
+            0.9206,
+            0.9194,
+            0.9516,
+            0.9355
+          ]
+        },
+        "mean_width_mpa": {
+          "mean": 343.9645,
+          "std": 38.4548,
+          "values": [
+            310.1419,
+            306.2957,
+            365.0285,
+            408.6485,
+            329.7078
+          ]
+        },
+        "median_width_mpa": {
+          "mean": 298.3727,
+          "std": 41.1691,
+          "values": [
+            242.8577,
+            269.3442,
+            332.5271,
+            356.0777,
+            291.0569
+          ]
+        },
+        "method": "locally-weighted cross-conformal (tree-spread normalized residuals on train only)",
+        "target_coverage": 0.9
+      },
+      "boosting_comparator": {
+        "metrics": {
+          "mae_mpa": {
+            "mean": 92.3263,
+            "std": 10.263,
+            "values": [
+              106.2399,
+              75.8522,
+              91.0934,
+              89.0776,
+              99.3683
+            ]
+          },
+          "naive_mae_mpa": {
+            "mean": 229.7445,
+            "std": 9.6958,
+            "values": [
+              241.4591,
+              219.377,
+              225.7932,
+              241.2035,
+              220.8898
+            ]
+          },
+          "r2": {
+            "mean": 0.7938,
+            "std": 0.0754,
+            "values": [
+              0.6986,
+              0.8737,
+              0.7969,
+              0.8801,
+              0.7195
+            ]
+          },
+          "rmse_mpa": {
+            "mean": 132.7413,
+            "std": 21.0938,
+            "values": [
+              160.5241,
+              102.7223,
+              130.9989,
+              118.2874,
+              151.1739
+            ]
+          }
+        },
+        "model": "MetallurgicalDescriptorVectorizer + GradientBoostingRegressor(n_estimators=200, lr=0.05, max_depth=3)",
+        "per_fold": [
+          {
+            "fold": 0,
+            "metrics": {
+              "mae_mpa": 106.2399,
+              "naive_mae_mpa": 241.4591,
+              "r2": 0.6986,
+              "rmse_mpa": 160.5241
+            }
+          },
+          {
+            "fold": 1,
+            "metrics": {
+              "mae_mpa": 75.8522,
+              "naive_mae_mpa": 219.377,
+              "r2": 0.8737,
+              "rmse_mpa": 102.7223
+            }
+          },
+          {
+            "fold": 2,
+            "metrics": {
+              "mae_mpa": 91.0934,
+              "naive_mae_mpa": 225.7932,
+              "r2": 0.7969,
+              "rmse_mpa": 130.9989
+            }
+          },
+          {
+            "fold": 3,
+            "metrics": {
+              "mae_mpa": 89.0776,
+              "naive_mae_mpa": 241.2035,
+              "r2": 0.8801,
+              "rmse_mpa": 118.2874
+            }
+          },
+          {
+            "fold": 4,
+            "metrics": {
+              "mae_mpa": 99.3683,
+              "naive_mae_mpa": 220.8898,
+              "r2": 0.7195,
+              "rmse_mpa": 151.1739
+            }
+          }
+        ]
+      },
+      "dataset": "D04 matbench_steels (R08)",
+      "decision_gate": {
+        "description": "Adopt only if the headline ensemble MAE is at least 50% lower than the train-mean predictor on every official fold AND mean R2 >= 0.70.",
+        "mae_reductions": [
+          0.6246,
+          0.6866,
+          0.6511,
+          0.6813,
+          0.6726
+        ],
+        "mean_r2": 0.8588,
+        "min_mae_reduction_vs_naive": 0.5,
+        "min_mean_r2": 0.7,
+        "passed": true,
+        "scope": "public D01/D04 data only; no plant validation"
+      },
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "metrics": {
+        "mae_mpa": {
+          "mean": 77.4728,
+          "std": 7.458,
+          "values": [
+            90.6403,
+            68.747,
+            78.7737,
+            76.8826,
+            72.3206
+          ]
+        },
+        "naive_mae_mpa": {
+          "mean": 229.7445,
+          "std": 9.6958,
+          "values": [
+            241.4591,
+            219.377,
+            225.7932,
+            241.2035,
+            220.8898
+          ]
+        },
+        "r2": {
+          "mean": 0.8588,
+          "std": 0.0404,
+          "values": [
+            0.8,
+            0.8962,
+            0.8526,
+            0.9106,
+            0.8344
+          ]
+        },
+        "rmse_mpa": {
+          "mean": 110.7562,
+          "std": 12.7624,
+          "values": [
+            130.7447,
+            93.1146,
+            111.6064,
+            102.1649,
+            116.1503
+          ]
+        }
+      },
+      "model": "Inner-CV hybrid ensemble: atomic-fraction ExtraTrees + MetallurgicalDescriptorVectorizer ExtraTrees (adaptive 90% PI)",
+      "model_id": "physics_hybrid_extra_trees",
+      "n_folds": 5,
+      "n_samples": 312,
+      "parity_points": [
+        {
+          "fold": 0,
+          "half_width_mpa": 336.04,
+          "observed_mpa": 1736.3,
+          "predicted_mpa": 1689.78
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 210.75,
+          "observed_mpa": 2249.6,
+          "predicted_mpa": 2342.53
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 181.0,
+          "observed_mpa": 1185.1,
+          "predicted_mpa": 1150.43
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 55.86,
+          "observed_mpa": 1322.1,
+          "predicted_mpa": 1310.77
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 113.94,
+          "observed_mpa": 1870.6,
+          "predicted_mpa": 1827.21
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 90.11,
+          "observed_mpa": 1405.6,
+          "predicted_mpa": 1515.74
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 104.51,
+          "observed_mpa": 1352.2,
+          "predicted_mpa": 1322.59
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 107.69,
+          "observed_mpa": 1515.8,
+          "predicted_mpa": 1346.73
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 138.55,
+          "observed_mpa": 1311.4,
+          "predicted_mpa": 1329.9
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 49.51,
+          "observed_mpa": 1245.4,
+          "predicted_mpa": 1300.86
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 233.89,
+          "observed_mpa": 1164.4,
+          "predicted_mpa": 1292.96
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 57.85,
+          "observed_mpa": 1250.8,
+          "predicted_mpa": 1303.32
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 113.62,
+          "observed_mpa": 1241.0,
+          "predicted_mpa": 1327.49
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 233.58,
+          "observed_mpa": 1646.7,
+          "predicted_mpa": 1394.15
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 56.38,
+          "observed_mpa": 1258.6,
+          "predicted_mpa": 1321.77
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 95.92,
+          "observed_mpa": 1218.4,
+          "predicted_mpa": 1325.11
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 62.98,
+          "observed_mpa": 1383.7,
+          "predicted_mpa": 1366.39
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 241.0,
+          "observed_mpa": 1486.2,
+          "predicted_mpa": 1382.66
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 86.46,
+          "observed_mpa": 1280.7,
+          "predicted_mpa": 1345.84
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 140.5,
+          "observed_mpa": 1205.8,
+          "predicted_mpa": 1189.12
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 73.51,
+          "observed_mpa": 1348.9,
+          "predicted_mpa": 1360.91
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 250.47,
+          "observed_mpa": 1287.3,
+          "predicted_mpa": 1273.47
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 664.3,
+          "observed_mpa": 2356.4,
+          "predicted_mpa": 2222.94
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 171.16,
+          "observed_mpa": 1144.8,
+          "predicted_mpa": 1246.97
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 72.71,
+          "observed_mpa": 1580.1,
+          "predicted_mpa": 1378.61
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 69.1,
+          "observed_mpa": 1302.8,
+          "predicted_mpa": 1356.08
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 231.66,
+          "observed_mpa": 1123.1,
+          "predicted_mpa": 1298.18
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 124.77,
+          "observed_mpa": 1109.3,
+          "predicted_mpa": 1070.1
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 48.65,
+          "observed_mpa": 1746.6,
+          "predicted_mpa": 1791.53
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 52.92,
+          "observed_mpa": 1795.5,
+          "predicted_mpa": 1779.09
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 142.57,
+          "observed_mpa": 1362.9,
+          "predicted_mpa": 1420.82
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 332.87,
+          "observed_mpa": 1123.1,
+          "predicted_mpa": 1199.91
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 169.03,
+          "observed_mpa": 1564.0,
+          "predicted_mpa": 1425.74
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 101.61,
+          "observed_mpa": 1130.4,
+          "predicted_mpa": 1129.76
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 122.19,
+          "observed_mpa": 1028.7,
+          "predicted_mpa": 1112.93
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 132.79,
+          "observed_mpa": 1801.8,
+          "predicted_mpa": 1373.73
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 50.97,
+          "observed_mpa": 1350.3,
+          "predicted_mpa": 1346.12
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 71.88,
+          "observed_mpa": 1308.0,
+          "predicted_mpa": 1295.73
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 43.86,
+          "observed_mpa": 1312.0,
+          "predicted_mpa": 1294.23
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 382.88,
+          "observed_mpa": 1661.2,
+          "predicted_mpa": 1686.08
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 110.33,
+          "observed_mpa": 1474.4,
+          "predicted_mpa": 1383.81
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 82.49,
+          "observed_mpa": 1175.4,
+          "predicted_mpa": 1199.92
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 76.97,
+          "observed_mpa": 1188.6,
+          "predicted_mpa": 1166.64
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 106.37,
+          "observed_mpa": 1150.6,
+          "predicted_mpa": 1226.37
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 101.87,
+          "observed_mpa": 1555.8,
+          "predicted_mpa": 1433.26
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 235.93,
+          "observed_mpa": 1730.2,
+          "predicted_mpa": 1709.76
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 455.19,
+          "observed_mpa": 1730.2,
+          "predicted_mpa": 1594.07
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 131.48,
+          "observed_mpa": 1798.3,
+          "predicted_mpa": 1727.84
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 267.17,
+          "observed_mpa": 1730.2,
+          "predicted_mpa": 1824.24
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 121.93,
+          "observed_mpa": 1169.2,
+          "predicted_mpa": 1212.4
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 95.6,
+          "observed_mpa": 1036.9,
+          "predicted_mpa": 1065.79
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 219.55,
+          "observed_mpa": 1737.2,
+          "predicted_mpa": 1484.22
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 97.12,
+          "observed_mpa": 1471.1,
+          "predicted_mpa": 1158.4
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 121.43,
+          "observed_mpa": 1272.6,
+          "predicted_mpa": 1327.48
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 248.99,
+          "observed_mpa": 1874.6,
+          "predicted_mpa": 1543.96
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 109.41,
+          "observed_mpa": 1243.6,
+          "predicted_mpa": 1290.8
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 88.72,
+          "observed_mpa": 1216.8,
+          "predicted_mpa": 1225.16
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 94.08,
+          "observed_mpa": 1451.7,
+          "predicted_mpa": 1418.24
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 232.87,
+          "observed_mpa": 1681.2,
+          "predicted_mpa": 1627.69
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 168.74,
+          "observed_mpa": 1805.2,
+          "predicted_mpa": 1649.64
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 207.06,
+          "observed_mpa": 1792.2,
+          "predicted_mpa": 1717.67
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 145.85,
+          "observed_mpa": 1019.0,
+          "predicted_mpa": 1102.8
+        },
+        {
+          "fold": 0,
+          "half_width_mpa": 230.29,
+          "observed_mpa": 1860.3,
+          "predicted_mpa": 1427.35
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 166.89,
+          "observed_mpa": 2487.3,
+          "predicted_mpa": 2394.17
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 173.23,
+          "observed_mpa": 1088.6,
+          "predicted_mpa": 1209.8
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 176.39,
+          "observed_mpa": 1502.0,
+          "predicted_mpa": 1346.72
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 144.29,
+          "observed_mpa": 2331.1,
+          "predicted_mpa": 2413.04
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 208.45,
+          "observed_mpa": 1350.4,
+          "predicted_mpa": 1358.48
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 176.54,
+          "observed_mpa": 1550.3,
+          "predicted_mpa": 1413.61
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 118.74,
+          "observed_mpa": 1081.1,
+          "predicted_mpa": 1237.81
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 109.61,
+          "observed_mpa": 1155.0,
+          "predicted_mpa": 1214.38
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 119.45,
+          "observed_mpa": 1131.9,
+          "predicted_mpa": 1228.27
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 290.49,
+          "observed_mpa": 1586.7,
+          "predicted_mpa": 1612.12
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 238.94,
+          "observed_mpa": 1453.8,
+          "predicted_mpa": 1405.96
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 59.39,
+          "observed_mpa": 1314.2,
+          "predicted_mpa": 1307.96
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 324.0,
+          "observed_mpa": 1012.8,
+          "predicted_mpa": 1237.61
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 394.04,
+          "observed_mpa": 1605.4,
+          "predicted_mpa": 1520.65
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 48.94,
+          "observed_mpa": 1275.3,
+          "predicted_mpa": 1356.98
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 55.92,
+          "observed_mpa": 1369.5,
+          "predicted_mpa": 1334.64
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 79.84,
+          "observed_mpa": 1359.7,
+          "predicted_mpa": 1342.4
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 207.02,
+          "observed_mpa": 1405.6,
+          "predicted_mpa": 1439.92
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 76.15,
+          "observed_mpa": 1423.8,
+          "predicted_mpa": 1298.22
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 190.8,
+          "observed_mpa": 1274.7,
+          "predicted_mpa": 1335.06
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 81.98,
+          "observed_mpa": 1371.4,
+          "predicted_mpa": 1307.93
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 129.92,
+          "observed_mpa": 1273.3,
+          "predicted_mpa": 1335.94
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 276.01,
+          "observed_mpa": 1088.6,
+          "predicted_mpa": 1143.5
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 56.24,
+          "observed_mpa": 1743.5,
+          "predicted_mpa": 1784.68
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 42.06,
+          "observed_mpa": 1741.8,
+          "predicted_mpa": 1762.26
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 128.98,
+          "observed_mpa": 1804.2,
+          "predicted_mpa": 1747.1
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 116.79,
+          "observed_mpa": 1818.0,
+          "predicted_mpa": 1742.26
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 86.91,
+          "observed_mpa": 1287.4,
+          "predicted_mpa": 1233.23
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 239.03,
+          "observed_mpa": 1136.8,
+          "predicted_mpa": 1148.7
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 174.24,
+          "observed_mpa": 1026.6,
+          "predicted_mpa": 1065.51
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 193.34,
+          "observed_mpa": 1164.4,
+          "predicted_mpa": 1146.26
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 225.99,
+          "observed_mpa": 1391.8,
+          "predicted_mpa": 1449.36
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 330.02,
+          "observed_mpa": 1164.4,
+          "predicted_mpa": 1241.71
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 154.31,
+          "observed_mpa": 1463.0,
+          "predicted_mpa": 1410.33
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 134.67,
+          "observed_mpa": 1592.9,
+          "predicted_mpa": 1537.67
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 146.88,
+          "observed_mpa": 1503.4,
+          "predicted_mpa": 1507.2
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 68.75,
+          "observed_mpa": 1317.0,
+          "predicted_mpa": 1324.61
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 47.7,
+          "observed_mpa": 1269.0,
+          "predicted_mpa": 1304.86
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 63.19,
+          "observed_mpa": 1344.0,
+          "predicted_mpa": 1326.68
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 51.32,
+          "observed_mpa": 1348.6,
+          "predicted_mpa": 1360.18
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 242.64,
+          "observed_mpa": 1463.3,
+          "predicted_mpa": 1454.13
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 72.19,
+          "observed_mpa": 1276.7,
+          "predicted_mpa": 1326.26
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 175.01,
+          "observed_mpa": 1357.3,
+          "predicted_mpa": 1432.75
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 148.35,
+          "observed_mpa": 1153.4,
+          "predicted_mpa": 1138.93
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 64.22,
+          "observed_mpa": 1145.8,
+          "predicted_mpa": 1178.46
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 78.29,
+          "observed_mpa": 1221.6,
+          "predicted_mpa": 1185.96
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 128.14,
+          "observed_mpa": 1506.8,
+          "predicted_mpa": 1436.54
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 79.47,
+          "observed_mpa": 1340.8,
+          "predicted_mpa": 1185.66
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 109.81,
+          "observed_mpa": 1282.2,
+          "predicted_mpa": 1228.15
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 235.0,
+          "observed_mpa": 1998.6,
+          "predicted_mpa": 1777.5
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 118.6,
+          "observed_mpa": 1005.9,
+          "predicted_mpa": 1119.03
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 122.96,
+          "observed_mpa": 1032.1,
+          "predicted_mpa": 1116.64
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 261.89,
+          "observed_mpa": 1309.1,
+          "predicted_mpa": 1377.05
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 308.65,
+          "observed_mpa": 1688.1,
+          "predicted_mpa": 1594.69
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 347.8,
+          "observed_mpa": 1600.0,
+          "predicted_mpa": 1644.21
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 102.12,
+          "observed_mpa": 1392.4,
+          "predicted_mpa": 1776.14
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 81.7,
+          "observed_mpa": 1230.6,
+          "predicted_mpa": 1200.06
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 103.42,
+          "observed_mpa": 1309.8,
+          "predicted_mpa": 1245.21
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 80.01,
+          "observed_mpa": 1212.6,
+          "predicted_mpa": 1212.45
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 178.3,
+          "observed_mpa": 1819.0,
+          "predicted_mpa": 1690.94
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 169.37,
+          "observed_mpa": 1723.2,
+          "predicted_mpa": 1793.41
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 158.45,
+          "observed_mpa": 1688.1,
+          "predicted_mpa": 1720.84
+        },
+        {
+          "fold": 1,
+          "half_width_mpa": 174.48,
+          "observed_mpa": 1653.6,
+          "predicted_mpa": 1684.41
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 182.29,
+          "observed_mpa": 2381.6,
+          "predicted_mpa": 2366.33
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 316.74,
+          "observed_mpa": 1603.3,
+          "predicted_mpa": 1562.04
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 341.53,
+          "observed_mpa": 2510.3,
+          "predicted_mpa": 2313.84
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 180.74,
+          "observed_mpa": 1312.6,
+          "predicted_mpa": 1395.97
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 97.04,
+          "observed_mpa": 1529.6,
+          "predicted_mpa": 1397.89
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 145.06,
+          "observed_mpa": 1322.9,
+          "predicted_mpa": 1428.63
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 53.37,
+          "observed_mpa": 1300.3,
+          "predicted_mpa": 1257.76
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 205.64,
+          "observed_mpa": 1309.1,
+          "predicted_mpa": 1512.91
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 378.41,
+          "observed_mpa": 1768.0,
+          "predicted_mpa": 1527.91
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 240.83,
+          "observed_mpa": 1240.2,
+          "predicted_mpa": 1420.43
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 161.25,
+          "observed_mpa": 1471.0,
+          "predicted_mpa": 1461.06
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 238.65,
+          "observed_mpa": 1536.5,
+          "predicted_mpa": 1540.03
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 166.12,
+          "observed_mpa": 1550.3,
+          "predicted_mpa": 1484.59
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 304.13,
+          "observed_mpa": 1755.2,
+          "predicted_mpa": 1509.13
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 353.5,
+          "observed_mpa": 1680.6,
+          "predicted_mpa": 1631.56
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 125.52,
+          "observed_mpa": 1226.4,
+          "predicted_mpa": 1192.42
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 322.74,
+          "observed_mpa": 1779.7,
+          "predicted_mpa": 1527.74
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 222.59,
+          "observed_mpa": 1729.4,
+          "predicted_mpa": 1553.96
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 71.99,
+          "observed_mpa": 1376.3,
+          "predicted_mpa": 1300.76
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 251.51,
+          "observed_mpa": 1212.0,
+          "predicted_mpa": 1218.19
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 83.82,
+          "observed_mpa": 1109.3,
+          "predicted_mpa": 1138.93
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 153.89,
+          "observed_mpa": 1405.6,
+          "predicted_mpa": 1528.68
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 105.32,
+          "observed_mpa": 1026.6,
+          "predicted_mpa": 1097.87
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 224.42,
+          "observed_mpa": 1810.0,
+          "predicted_mpa": 1678.83
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 24.88,
+          "observed_mpa": 1777.6,
+          "predicted_mpa": 1745.03
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 358.76,
+          "observed_mpa": 1026.6,
+          "predicted_mpa": 1201.89
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 153.75,
+          "observed_mpa": 1478.4,
+          "predicted_mpa": 1456.78
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 170.87,
+          "observed_mpa": 1236.6,
+          "predicted_mpa": 1250.07
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 146.13,
+          "observed_mpa": 1219.7,
+          "predicted_mpa": 1261.31
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 166.41,
+          "observed_mpa": 1547.3,
+          "predicted_mpa": 1599.09
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 155.97,
+          "observed_mpa": 1016.4,
+          "predicted_mpa": 1126.77
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 232.54,
+          "observed_mpa": 1371.1,
+          "predicted_mpa": 1457.69
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 192.55,
+          "observed_mpa": 1117.3,
+          "predicted_mpa": 1157.4
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 184.45,
+          "observed_mpa": 1232.0,
+          "predicted_mpa": 1201.25
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 193.79,
+          "observed_mpa": 1047.3,
+          "predicted_mpa": 1153.59
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 156.84,
+          "observed_mpa": 1096.5,
+          "predicted_mpa": 1229.2
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 280.25,
+          "observed_mpa": 1061.1,
+          "predicted_mpa": 1204.31
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 51.69,
+          "observed_mpa": 1306.9,
+          "predicted_mpa": 1284.81
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 46.06,
+          "observed_mpa": 1296.0,
+          "predicted_mpa": 1289.04
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 42.86,
+          "observed_mpa": 1277.7,
+          "predicted_mpa": 1288.84
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 79.46,
+          "observed_mpa": 1280.2,
+          "predicted_mpa": 1283.89
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 174.41,
+          "observed_mpa": 1199.0,
+          "predicted_mpa": 1202.18
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 72.71,
+          "observed_mpa": 1305.4,
+          "predicted_mpa": 1284.91
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 166.72,
+          "observed_mpa": 1194.0,
+          "predicted_mpa": 1173.0
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 229.36,
+          "observed_mpa": 1235.9,
+          "predicted_mpa": 1190.49
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 232.16,
+          "observed_mpa": 1419.4,
+          "predicted_mpa": 1445.04
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 125.41,
+          "observed_mpa": 1224.7,
+          "predicted_mpa": 1222.74
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 151.95,
+          "observed_mpa": 1267.8,
+          "predicted_mpa": 1226.04
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 163.79,
+          "observed_mpa": 1172.0,
+          "predicted_mpa": 1178.42
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 57.63,
+          "observed_mpa": 1178.9,
+          "predicted_mpa": 1176.17
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 152.43,
+          "observed_mpa": 1846.5,
+          "predicted_mpa": 1671.17
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 184.13,
+          "observed_mpa": 1218.8,
+          "predicted_mpa": 1257.33
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 231.48,
+          "observed_mpa": 1462.7,
+          "predicted_mpa": 1451.32
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 265.43,
+          "observed_mpa": 1298.8,
+          "predicted_mpa": 1353.16
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 126.05,
+          "observed_mpa": 1404.2,
+          "predicted_mpa": 1394.11
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 373.57,
+          "observed_mpa": 1641.2,
+          "predicted_mpa": 1778.98
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 370.6,
+          "observed_mpa": 1599.4,
+          "predicted_mpa": 1675.92
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 110.91,
+          "observed_mpa": 1390.4,
+          "predicted_mpa": 1299.54
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 133.91,
+          "observed_mpa": 1784.5,
+          "predicted_mpa": 1716.53
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 137.72,
+          "observed_mpa": 1340.1,
+          "predicted_mpa": 1741.37
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 155.92,
+          "observed_mpa": 1304.3,
+          "predicted_mpa": 1384.73
+        },
+        {
+          "fold": 2,
+          "half_width_mpa": 135.18,
+          "observed_mpa": 1172.0,
+          "predicted_mpa": 1199.62
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 239.44,
+          "observed_mpa": 1123.1,
+          "predicted_mpa": 1360.84
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 134.15,
+          "observed_mpa": 2501.1,
+          "predicted_mpa": 2363.47
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 235.57,
+          "observed_mpa": 2402.3,
+          "predicted_mpa": 2360.0
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 206.58,
+          "observed_mpa": 2372.4,
+          "predicted_mpa": 2381.53
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 223.17,
+          "observed_mpa": 2381.6,
+          "predicted_mpa": 2382.61
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 97.68,
+          "observed_mpa": 1825.8,
+          "predicted_mpa": 1811.21
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 134.91,
+          "observed_mpa": 1502.0,
+          "predicted_mpa": 1435.28
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 750.7,
+          "observed_mpa": 2157.3,
+          "predicted_mpa": 2039.38
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 147.47,
+          "observed_mpa": 1287.4,
+          "predicted_mpa": 1181.02
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 602.31,
+          "observed_mpa": 1571.2,
+          "predicted_mpa": 1550.75
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 331.09,
+          "observed_mpa": 1288.4,
+          "predicted_mpa": 1319.11
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 184.11,
+          "observed_mpa": 1460.7,
+          "predicted_mpa": 1364.05
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 354.13,
+          "observed_mpa": 1309.1,
+          "predicted_mpa": 1345.27
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 399.35,
+          "observed_mpa": 1669.3,
+          "predicted_mpa": 1464.48
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 65.4,
+          "observed_mpa": 1382.2,
+          "predicted_mpa": 1343.65
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 234.68,
+          "observed_mpa": 1373.9,
+          "predicted_mpa": 1456.78
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 158.83,
+          "observed_mpa": 1233.3,
+          "predicted_mpa": 1325.78
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 351.61,
+          "observed_mpa": 1267.1,
+          "predicted_mpa": 1442.78
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 298.49,
+          "observed_mpa": 1731.7,
+          "predicted_mpa": 1534.52
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 92.56,
+          "observed_mpa": 1311.1,
+          "predicted_mpa": 1279.77
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 142.2,
+          "observed_mpa": 1278.2,
+          "predicted_mpa": 1331.22
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 103.93,
+          "observed_mpa": 1368.5,
+          "predicted_mpa": 1309.29
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 66.07,
+          "observed_mpa": 1369.5,
+          "predicted_mpa": 1339.47
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 67.42,
+          "observed_mpa": 1332.7,
+          "predicted_mpa": 1333.19
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 251.72,
+          "observed_mpa": 1350.4,
+          "predicted_mpa": 1309.65
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 221.96,
+          "observed_mpa": 1393.5,
+          "predicted_mpa": 1382.17
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 119.89,
+          "observed_mpa": 1429.7,
+          "predicted_mpa": 1499.44
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 187.01,
+          "observed_mpa": 1282.2,
+          "predicted_mpa": 1380.91
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 372.64,
+          "observed_mpa": 1071.4,
+          "predicted_mpa": 1297.87
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 151.78,
+          "observed_mpa": 1019.7,
+          "predicted_mpa": 1055.66
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 220.01,
+          "observed_mpa": 1629.9,
+          "predicted_mpa": 1603.2
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 123.35,
+          "observed_mpa": 1522.7,
+          "predicted_mpa": 1538.28
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 163.39,
+          "observed_mpa": 1426.2,
+          "predicted_mpa": 1473.03
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 193.45,
+          "observed_mpa": 1455.4,
+          "predicted_mpa": 1540.69
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 76.15,
+          "observed_mpa": 1357.9,
+          "predicted_mpa": 1322.17
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 67.95,
+          "observed_mpa": 1297.5,
+          "predicted_mpa": 1320.66
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 62.51,
+          "observed_mpa": 1391.2,
+          "predicted_mpa": 1333.47
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 186.78,
+          "observed_mpa": 1155.0,
+          "predicted_mpa": 1107.56
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 278.47,
+          "observed_mpa": 1074.9,
+          "predicted_mpa": 1236.15
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 310.5,
+          "observed_mpa": 1667.4,
+          "predicted_mpa": 1690.19
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 196.38,
+          "observed_mpa": 1182.0,
+          "predicted_mpa": 1265.14
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 94.79,
+          "observed_mpa": 1258.8,
+          "predicted_mpa": 1196.1
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 188.93,
+          "observed_mpa": 1414.5,
+          "predicted_mpa": 1369.54
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 94.07,
+          "observed_mpa": 1207.8,
+          "predicted_mpa": 1182.26
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 189.06,
+          "observed_mpa": 1125.0,
+          "predicted_mpa": 1226.37
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 147.89,
+          "observed_mpa": 2005.5,
+          "predicted_mpa": 1899.49
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 189.45,
+          "observed_mpa": 1087.0,
+          "predicted_mpa": 1184.56
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 117.4,
+          "observed_mpa": 1577.8,
+          "predicted_mpa": 1779.11
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 168.25,
+          "observed_mpa": 1383.5,
+          "predicted_mpa": 1400.15
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 446.74,
+          "observed_mpa": 1683.0,
+          "predicted_mpa": 1488.23
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 146.1,
+          "observed_mpa": 1061.7,
+          "predicted_mpa": 1043.53
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 141.23,
+          "observed_mpa": 1194.0,
+          "predicted_mpa": 1218.38
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 135.65,
+          "observed_mpa": 1390.4,
+          "predicted_mpa": 1371.65
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 169.04,
+          "observed_mpa": 1730.2,
+          "predicted_mpa": 1712.58
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 171.96,
+          "observed_mpa": 1674.6,
+          "predicted_mpa": 1710.69
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 106.21,
+          "observed_mpa": 1324.3,
+          "predicted_mpa": 1280.39
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 189.21,
+          "observed_mpa": 1188.5,
+          "predicted_mpa": 1376.92
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 196.76,
+          "observed_mpa": 1688.1,
+          "predicted_mpa": 1691.08
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 169.73,
+          "observed_mpa": 1136.9,
+          "predicted_mpa": 1409.17
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 132.8,
+          "observed_mpa": 1167.2,
+          "predicted_mpa": 1227.98
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 352.45,
+          "observed_mpa": 1564.0,
+          "predicted_mpa": 1660.32
+        },
+        {
+          "fold": 3,
+          "half_width_mpa": 314.6,
+          "observed_mpa": 1021.0,
+          "predicted_mpa": 1185.52
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 146.87,
+          "observed_mpa": 2411.5,
+          "predicted_mpa": 2403.47
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 183.11,
+          "observed_mpa": 1328.3,
+          "predicted_mpa": 1280.41
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 256.24,
+          "observed_mpa": 1228.9,
+          "predicted_mpa": 1270.73
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 144.99,
+          "observed_mpa": 2411.5,
+          "predicted_mpa": 2396.55
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 184.08,
+          "observed_mpa": 1274.7,
+          "predicted_mpa": 1419.96
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 195.31,
+          "observed_mpa": 1460.7,
+          "predicted_mpa": 1450.95
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 118.58,
+          "observed_mpa": 1243.4,
+          "predicted_mpa": 1333.12
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 214.87,
+          "observed_mpa": 1412.5,
+          "predicted_mpa": 1365.95
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 229.96,
+          "observed_mpa": 1169.4,
+          "predicted_mpa": 1351.65
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 324.62,
+          "observed_mpa": 1580.0,
+          "predicted_mpa": 1413.68
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 187.33,
+          "observed_mpa": 1164.4,
+          "predicted_mpa": 1561.22
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 198.13,
+          "observed_mpa": 1837.9,
+          "predicted_mpa": 1810.7
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 157.42,
+          "observed_mpa": 1133.4,
+          "predicted_mpa": 1219.2
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 123.02,
+          "observed_mpa": 1358.2,
+          "predicted_mpa": 1324.6
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 82.79,
+          "observed_mpa": 1354.2,
+          "predicted_mpa": 1364.63
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 93.25,
+          "observed_mpa": 1143.7,
+          "predicted_mpa": 1190.65
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 141.52,
+          "observed_mpa": 1338.0,
+          "predicted_mpa": 1389.4
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 159.49,
+          "observed_mpa": 1341.7,
+          "predicted_mpa": 1416.99
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 89.72,
+          "observed_mpa": 1344.4,
+          "predicted_mpa": 1334.03
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 159.59,
+          "observed_mpa": 1438.6,
+          "predicted_mpa": 1378.51
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 65.47,
+          "observed_mpa": 1372.9,
+          "predicted_mpa": 1351.37
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 192.92,
+          "observed_mpa": 1575.5,
+          "predicted_mpa": 1472.61
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 536.01,
+          "observed_mpa": 1233.3,
+          "predicted_mpa": 1434.98
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 92.59,
+          "observed_mpa": 1376.7,
+          "predicted_mpa": 1314.47
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 65.96,
+          "observed_mpa": 1299.8,
+          "predicted_mpa": 1331.05
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 127.99,
+          "observed_mpa": 1130.0,
+          "predicted_mpa": 1180.92
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 253.91,
+          "observed_mpa": 1237.0,
+          "predicted_mpa": 1289.58
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 163.64,
+          "observed_mpa": 1412.5,
+          "predicted_mpa": 1388.2
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 124.67,
+          "observed_mpa": 1258.2,
+          "predicted_mpa": 1226.14
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 59.69,
+          "observed_mpa": 1792.1,
+          "predicted_mpa": 1774.95
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 184.62,
+          "observed_mpa": 1005.9,
+          "predicted_mpa": 1076.95
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 448.19,
+          "observed_mpa": 1525.0,
+          "predicted_mpa": 1493.54
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 307.48,
+          "observed_mpa": 1040.4,
+          "predicted_mpa": 1213.17
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 377.55,
+          "observed_mpa": 1536.5,
+          "predicted_mpa": 1351.64
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 257.94,
+          "observed_mpa": 1250.5,
+          "predicted_mpa": 1649.04
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 75.19,
+          "observed_mpa": 1615.8,
+          "predicted_mpa": 1534.93
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 230.35,
+          "observed_mpa": 1521.3,
+          "predicted_mpa": 1386.13
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 40.02,
+          "observed_mpa": 1285.0,
+          "predicted_mpa": 1286.15
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 41.03,
+          "observed_mpa": 1276.5,
+          "predicted_mpa": 1296.01
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 56.65,
+          "observed_mpa": 1294.9,
+          "predicted_mpa": 1317.78
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 85.18,
+          "observed_mpa": 1157.5,
+          "predicted_mpa": 1204.56
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 86.86,
+          "observed_mpa": 1280.8,
+          "predicted_mpa": 1306.17
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 173.0,
+          "observed_mpa": 1091.4,
+          "predicted_mpa": 1247.51
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 94.5,
+          "observed_mpa": 1173.8,
+          "predicted_mpa": 1154.74
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 52.31,
+          "observed_mpa": 1163.0,
+          "predicted_mpa": 1182.29
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 83.08,
+          "observed_mpa": 1167.2,
+          "predicted_mpa": 1183.93
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 96.35,
+          "observed_mpa": 1243.0,
+          "predicted_mpa": 1245.87
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 139.74,
+          "observed_mpa": 1010.8,
+          "predicted_mpa": 1084.39
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 114.52,
+          "observed_mpa": 1194.0,
+          "predicted_mpa": 1213.37
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 190.37,
+          "observed_mpa": 2006.0,
+          "predicted_mpa": 1954.3
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 91.91,
+          "observed_mpa": 1475.8,
+          "predicted_mpa": 1478.32
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 139.18,
+          "observed_mpa": 1716.3,
+          "predicted_mpa": 1633.86
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 120.25,
+          "observed_mpa": 1263.6,
+          "predicted_mpa": 1172.58
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 146.07,
+          "observed_mpa": 1150.6,
+          "predicted_mpa": 1150.26
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 100.5,
+          "observed_mpa": 1437.3,
+          "predicted_mpa": 1400.36
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 97.2,
+          "observed_mpa": 1254.0,
+          "predicted_mpa": 1264.13
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 113.5,
+          "observed_mpa": 1736.3,
+          "predicted_mpa": 1738.85
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 160.12,
+          "observed_mpa": 1420.0,
+          "predicted_mpa": 1426.54
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 272.36,
+          "observed_mpa": 1681.2,
+          "predicted_mpa": 1678.78
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 149.0,
+          "observed_mpa": 1722.5,
+          "predicted_mpa": 1715.7
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 296.86,
+          "observed_mpa": 1812.1,
+          "predicted_mpa": 1677.21
+        },
+        {
+          "fold": 4,
+          "half_width_mpa": 325.32,
+          "observed_mpa": 1139.7,
+          "predicted_mpa": 1550.49
+        }
+      ],
+      "per_fold": [
+        {
+          "adaptive_interval": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "empirical_coverage": 0.7937,
+            "mean_half_width_mpa": 155.071,
+            "mean_width_mpa": 310.1419,
+            "median_width_mpa": 242.8577,
+            "method": "locally-weighted cross-conformal (tree-spread normalized residuals on train only)",
+            "quantile_scale": 1.3738,
+            "target_coverage": 0.9
+          },
+          "fold": 0,
+          "inner_cv_best_mae_mpa": 78.9519,
+          "metrics": {
+            "mae_mpa": 90.6403,
+            "naive_mae_mpa": 241.4591,
+            "r2": 0.8,
+            "rmse_mpa": 130.7447
+          },
+          "selected_params": {
+            "max_features": 1.0,
+            "min_samples_leaf": 1,
+            "physics_weight": 0.0
+          },
+          "split_fingerprint": "24d9ae1e2baa71a3d359b3d1c5ef1addbebc1a593985aa1e61db60a5c854d744"
+        },
+        {
+          "adaptive_interval": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "empirical_coverage": 0.9206,
+            "mean_half_width_mpa": 153.1478,
+            "mean_width_mpa": 306.2957,
+            "median_width_mpa": 269.3442,
+            "method": "locally-weighted cross-conformal (tree-spread normalized residuals on train only)",
+            "quantile_scale": 1.4558,
+            "target_coverage": 0.9
+          },
+          "fold": 1,
+          "inner_cv_best_mae_mpa": 89.2954,
+          "metrics": {
+            "mae_mpa": 68.747,
+            "naive_mae_mpa": 219.377,
+            "r2": 0.8962,
+            "rmse_mpa": 93.1146
+          },
+          "selected_params": {
+            "max_features": 1.0,
+            "min_samples_leaf": 2,
+            "physics_weight": 0.35
+          },
+          "split_fingerprint": "bac72ee0570d62482e4233da88690e81f289b663ce3a276321e8c2e38a3f011f"
+        },
+        {
+          "adaptive_interval": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "empirical_coverage": 0.9194,
+            "mean_half_width_mpa": 182.5142,
+            "mean_width_mpa": 365.0285,
+            "median_width_mpa": 332.5271,
+            "method": "locally-weighted cross-conformal (tree-spread normalized residuals on train only)",
+            "quantile_scale": 1.3309,
+            "target_coverage": 0.9
+          },
+          "fold": 2,
+          "inner_cv_best_mae_mpa": 86.8159,
+          "metrics": {
+            "mae_mpa": 78.7737,
+            "naive_mae_mpa": 225.7932,
+            "r2": 0.8526,
+            "rmse_mpa": 111.6064
+          },
+          "selected_params": {
+            "max_features": 0.5,
+            "min_samples_leaf": 1,
+            "physics_weight": 0.0
+          },
+          "split_fingerprint": "a2fcde2f8672d6571dbbd1b2adf4e17652928a0eeaa0102a25c404472cdeffbc"
+        },
+        {
+          "adaptive_interval": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "empirical_coverage": 0.9516,
+            "mean_half_width_mpa": 204.3243,
+            "mean_width_mpa": 408.6485,
+            "median_width_mpa": 356.0777,
+            "method": "locally-weighted cross-conformal (tree-spread normalized residuals on train only)",
+            "quantile_scale": 1.6253,
+            "target_coverage": 0.9
+          },
+          "fold": 3,
+          "inner_cv_best_mae_mpa": 89.8454,
+          "metrics": {
+            "mae_mpa": 76.8826,
+            "naive_mae_mpa": 241.2035,
+            "r2": 0.9106,
+            "rmse_mpa": 102.1649
+          },
+          "selected_params": {
+            "max_features": 1.0,
+            "min_samples_leaf": 2,
+            "physics_weight": 0.0
+          },
+          "split_fingerprint": "7c46782f21de68fbd3b427a1e7b8a3abd3ef710345ceb99aa8edbcf89768f3c3"
+        },
+        {
+          "adaptive_interval": {
+            "alpha": 0.1,
+            "calibration_folds": 4,
+            "empirical_coverage": 0.9355,
+            "mean_half_width_mpa": 164.8539,
+            "mean_width_mpa": 329.7078,
+            "median_width_mpa": 291.0569,
+            "method": "locally-weighted cross-conformal (tree-spread normalized residuals on train only)",
+            "quantile_scale": 1.4309,
+            "target_coverage": 0.9
+          },
+          "fold": 4,
+          "inner_cv_best_mae_mpa": 84.9064,
+          "metrics": {
+            "mae_mpa": 72.3206,
+            "naive_mae_mpa": 220.8898,
+            "r2": 0.8344,
+            "rmse_mpa": 116.1503
+          },
+          "selected_params": {
+            "max_features": 1.0,
+            "min_samples_leaf": 1,
+            "physics_weight": 0.0
+          },
+          "split_fingerprint": "3df242fc097e00f2d181f20c7c3097851e81547410a48078cc54ae218bf62833"
+        }
+      ],
+      "target_unit": "MPa"
+    },
     "matbench_steels_random_forest": {
       "dataset": "D04 matbench_steels (R08)",
       "decision_gate": {
@@ -789,6 +3011,312 @@
         23
       ]
     },
+    "uci_faults_multiclass_ensemble": {
+      "class_names": [
+        "Pastry",
+        "Z_Scratch",
+        "K_Scatch",
+        "Stains",
+        "Dirtiness",
+        "Bumps",
+        "Other_Faults"
+      ],
+      "comparators": {
+        "multiclass_extra_trees": {
+          "accuracy": {
+            "mean": 0.8093,
+            "std": 0.0075,
+            "values": [
+              0.8123,
+              0.8098,
+              0.7969,
+              0.8072,
+              0.8201
+            ]
+          },
+          "macro_f1": {
+            "mean": 0.8263,
+            "std": 0.0156,
+            "values": [
+              0.8218,
+              0.8066,
+              0.8215,
+              0.8272,
+              0.8543
+            ]
+          }
+        },
+        "multiclass_gradient_boosting": {
+          "accuracy": {
+            "mean": 0.8026,
+            "std": 0.0106,
+            "values": [
+              0.8175,
+              0.7969,
+              0.8098,
+              0.7866,
+              0.8021
+            ]
+          },
+          "macro_f1": {
+            "mean": 0.817,
+            "std": 0.0117,
+            "values": [
+              0.8304,
+              0.8021,
+              0.8283,
+              0.8047,
+              0.8195
+            ]
+          }
+        }
+      },
+      "confusion_matrix_counts": [
+        [
+          91,
+          2,
+          0,
+          0,
+          0,
+          16,
+          51
+        ],
+        [
+          0,
+          178,
+          0,
+          0,
+          0,
+          0,
+          12
+        ],
+        [
+          1,
+          0,
+          371,
+          0,
+          0,
+          1,
+          17
+        ],
+        [
+          0,
+          0,
+          0,
+          62,
+          0,
+          2,
+          6
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          44,
+          3,
+          7
+        ],
+        [
+          12,
+          1,
+          0,
+          0,
+          0,
+          285,
+          107
+        ],
+        [
+          26,
+          7,
+          7,
+          2,
+          4,
+          68,
+          561
+        ]
+      ],
+      "confusion_matrix_normalized": [
+        [
+          0.5687,
+          0.0125,
+          0.0,
+          0.0,
+          0.0,
+          0.1,
+          0.3187
+        ],
+        [
+          0.0,
+          0.9368,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0632
+        ],
+        [
+          0.0026,
+          0.0,
+          0.9513,
+          0.0,
+          0.0,
+          0.0026,
+          0.0436
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.8857,
+          0.0,
+          0.0286,
+          0.0857
+        ],
+        [
+          0.0182,
+          0.0,
+          0.0,
+          0.0,
+          0.8,
+          0.0545,
+          0.1273
+        ],
+        [
+          0.0296,
+          0.0025,
+          0.0,
+          0.0,
+          0.0,
+          0.7037,
+          0.2642
+        ],
+        [
+          0.0385,
+          0.0104,
+          0.0104,
+          0.003,
+          0.0059,
+          0.1007,
+          0.8311
+        ]
+      ],
+      "dataset": "D01 UCI Steel Plates Faults (7-class mutually exclusive)",
+      "metrics": {
+        "accuracy": {
+          "mean": 0.8185,
+          "std": 0.0066,
+          "values": [
+            0.8201,
+            0.8123,
+            0.8278,
+            0.8098,
+            0.8226
+          ]
+        },
+        "macro_f1": {
+          "mean": 0.8319,
+          "std": 0.0119,
+          "values": [
+            0.832,
+            0.8114,
+            0.8455,
+            0.8293,
+            0.8414
+          ]
+        }
+      },
+      "model": "Soft-voting 7-class ensemble: ExtraTreesClassifier(n_estimators=300, max_features=0.7) + GradientBoostingClassifier(n_estimators=120, lr=0.08, max_depth=4, subsample=0.8)",
+      "model_id": "multiclass_soft_voting_ensemble",
+      "n_classes": 7,
+      "n_features": 27,
+      "n_runs": 5,
+      "n_samples": 1941,
+      "per_seed": [
+        {
+          "extra_trees_metrics": {
+            "accuracy": 0.8123,
+            "macro_f1": 0.8218
+          },
+          "gradient_boosting_metrics": {
+            "accuracy": 0.8175,
+            "macro_f1": 0.8304
+          },
+          "metrics": {
+            "accuracy": 0.8201,
+            "macro_f1": 0.832
+          },
+          "seed": 42
+        },
+        {
+          "extra_trees_metrics": {
+            "accuracy": 0.8098,
+            "macro_f1": 0.8066
+          },
+          "gradient_boosting_metrics": {
+            "accuracy": 0.7969,
+            "macro_f1": 0.8021
+          },
+          "metrics": {
+            "accuracy": 0.8123,
+            "macro_f1": 0.8114
+          },
+          "seed": 7
+        },
+        {
+          "extra_trees_metrics": {
+            "accuracy": 0.7969,
+            "macro_f1": 0.8215
+          },
+          "gradient_boosting_metrics": {
+            "accuracy": 0.8098,
+            "macro_f1": 0.8283
+          },
+          "metrics": {
+            "accuracy": 0.8278,
+            "macro_f1": 0.8455
+          },
+          "seed": 11
+        },
+        {
+          "extra_trees_metrics": {
+            "accuracy": 0.8072,
+            "macro_f1": 0.8272
+          },
+          "gradient_boosting_metrics": {
+            "accuracy": 0.7866,
+            "macro_f1": 0.8047
+          },
+          "metrics": {
+            "accuracy": 0.8098,
+            "macro_f1": 0.8293
+          },
+          "seed": 19
+        },
+        {
+          "extra_trees_metrics": {
+            "accuracy": 0.8201,
+            "macro_f1": 0.8543
+          },
+          "gradient_boosting_metrics": {
+            "accuracy": 0.8021,
+            "macro_f1": 0.8195
+          },
+          "metrics": {
+            "accuracy": 0.8226,
+            "macro_f1": 0.8414
+          },
+          "seed": 23
+        }
+      ],
+      "seeds": [
+        42,
+        7,
+        11,
+        19,
+        23
+      ]
+    },
     "uci_faults_nested_extra_trees": {
       "candidate_count": 4,
       "dataset": "D01 UCI Steel Plates Faults",
@@ -992,16 +3520,30 @@
     "d01_extra_trees_accuracy_std": 0.0114,
     "d01_extra_trees_macro_f1": 0.7755,
     "d01_extra_trees_macro_f1_std": 0.0219,
+    "d01_multiclass_accuracy": 0.8185,
+    "d01_multiclass_accuracy_std": 0.0066,
+    "d01_multiclass_gain_vs_nested_pp": 6.99,
+    "d01_multiclass_macro_f1": 0.8319,
+    "d01_multiclass_macro_f1_std": 0.0119,
     "d01_nested_accuracy": 0.7486,
     "d01_nested_accuracy_std": 0.0072,
     "d01_nested_macro_f1": 0.8114,
     "d01_nested_macro_f1_std": 0.0164,
     "d01_random_forest_accuracy": 0.6766,
+    "d04_adaptive_interval_empirical_coverage": 0.9042,
+    "d04_adaptive_interval_empirical_coverage_std": 0.0565,
+    "d04_adaptive_interval_mean_width_mpa": 343.9645,
+    "d04_adaptive_interval_median_width_mpa": 298.3727,
     "d04_extra_trees_mae_mpa": 79.1707,
     "d04_extra_trees_mae_std_mpa": 8.698,
     "d04_extra_trees_r2": 0.8566,
     "d04_extra_trees_r2_std": 0.0374,
     "d04_extra_trees_rmse_mpa": 112.0894,
+    "d04_hybrid_mae_mpa": 77.4728,
+    "d04_hybrid_mae_std_mpa": 7.458,
+    "d04_hybrid_r2": 0.8588,
+    "d04_hybrid_r2_std": 0.0404,
+    "d04_hybrid_rmse_mpa": 110.7562,
     "d04_interval_empirical_coverage": 0.9198,
     "d04_interval_empirical_coverage_std": 0.0304,
     "d04_interval_half_width_mpa": 194.5399,
@@ -1020,7 +3562,7 @@
     "decision_gate_passed": true,
     "external_comparator_mae_mpa": 87.7627,
     "external_comparator_note": "MatBench MODNet v0.1.12, different model and featurization; quoted as external literature, not reproduced",
-    "headline_model": "Nested-CV ExtraTrees (inner-selected hyperparameters)",
+    "headline_model": "UCI: 7-class Soft-Voting Ensemble (ET + GBC) · MatBench: Inner-CV Hybrid Physics/Composition ExtraTrees (Adaptive 90% PI)",
     "nested_search": {
       "d01_inner_cv": {
         "candidate_count": 4,

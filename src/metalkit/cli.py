@@ -65,6 +65,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--comparison-output",
         help="comparison chart path; defaults to c01_model_comparison.svg beside --output",
     )
+    report_command.add_argument(
+        "--diagnostics-output",
+        help="diagnostics chart path; defaults to c01_diagnostics.svg beside --output",
+    )
     return parser
 
 
@@ -105,7 +109,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"case verdict: {result['summary']['case_verdict']}")
         print(f"wrote {output_dir / 'metrics.json'} and {output_dir / 'provenance.json'}")
     elif args.command == "report":
-        from metalkit.report import write_comparison, write_scorecard
+        from metalkit.report import write_comparison, write_diagnostics, write_scorecard
 
         output = Path(args.output)
         comparison_output = (
@@ -113,10 +117,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.comparison_output
             else output.with_name("c01_model_comparison.svg")
         )
+        diagnostics_output = (
+            Path(args.diagnostics_output)
+            if args.diagnostics_output
+            else output.with_name("c01_diagnostics.svg")
+        )
         scorecard = write_scorecard(Path(args.metrics), output)
         comparison = write_comparison(Path(args.metrics), comparison_output)
+        diagnostics = write_diagnostics(Path(args.metrics), diagnostics_output)
         print(f"wrote {scorecard}")
         print(f"wrote {comparison}")
+        print(f"wrote {diagnostics}")
     else:
         parser.print_help()
 

@@ -4,6 +4,17 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] — 2026-11-26 · 7-class UCI ensemble, metallurgical descriptors, adaptive 90% PI & Fig. 2 diagnostics
+
+### Added
+
+- `metalkit.descriptors.MetallurgicalDescriptorVectorizer`: pure-NumPy, zero-dependency metallurgical descriptor generator (composition-weighted elemental statistics + atomic-size mismatch $\delta$, electronegativity spread, mixing entropy $\Delta S_{\text{mix}}/R$, $C_{\text{eq}}$, $\text{Cr}_{\text{eq}}$, $\text{Ni}_{\text{eq}}$).
+- Single-label 7-class UCI Steel Plates Faults soft-voting ensemble (`ExtraTreesClassifier` + `GradientBoostingClassifier`) with aggregated 7×7 confusion matrix diagnostics, boosting accuracy from `0.7486` to **0.8185 ± 0.0066** (+6.99 pp) and macro F1 to **0.8319 ± 0.0119**.
+- Leakage-safe inner-CV hybrid composition + metallurgical-descriptor ExtraTrees ensemble for `matbench_steels` (**77.4728 ± 7.4580 MPa MAE**, **$R^2 = 0.8588 ± 0.0404$**) plus a `GradientBoostingRegressor` boosting comparator (`92.3263 MPa MAE`).
+- Locally-weighted (adaptive) 90% cross-conformal prediction intervals scaled by ensemble tree spread $\hat{\sigma}(x)$ strictly on outer training splits, achieving **90.42% ± 5.65%** empirical coverage while reducing median width by **23.3%** (`389.08 MPa` -> **298.37 MPa**).
+- Springer Nature-style **Fig. 2 (`docs/figures/c01_diagnostics.svg`)** displaying sample-level yield-strength parity, adaptive 90% residual calibration, and the normalized 7×7 UCI fault confusion matrix.
+- `tests/test_descriptors.py` (5 new unit tests; 24 tests total).
+
 ## [0.6.1] — 2026-11-26 · Springer-style publication figures & public documentation cleanup
 
 ### Fixed

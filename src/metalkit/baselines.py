@@ -22,12 +22,20 @@ import numpy as np
 from sklearn.ensemble import (
     ExtraTreesClassifier,
     ExtraTreesRegressor,
+    GradientBoostingClassifier,
+    GradientBoostingRegressor,
     RandomForestClassifier,
     RandomForestRegressor,
 )
 from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.linear_model import LogisticRegression, Ridge
-from sklearn.metrics import accuracy_score, f1_score, make_scorer, mean_absolute_error
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    make_scorer,
+    mean_absolute_error,
+)
 from sklearn.model_selection import GridSearchCV, KFold, train_test_split
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline, make_pipeline
@@ -40,6 +48,7 @@ from metalkit.datasets import (
     load_uci_faults,
     verify_data_dir,
 )
+from metalkit.descriptors import MetallurgicalDescriptorVectorizer
 from metalkit.provenance import environment_info, source_fingerprint
 
 _ELEMENT_TOKEN = re.compile(r"([A-Z][a-z]?)(\d*\.?\d*)")
@@ -743,6 +752,427 @@ def run_matbench_steels_nested_multi(
     }
 
 
+UCI_FAULT_CLASSES: tuple[str, ...] = (
+    "Pastry",
+    "Z_Scratch",
+    "K_Scatch",
+    "Stains",
+    "Dirtiness",
+    "Bumps",
+    "Other_Faults",
+)
+ADAPTIVE_CONFORMAL_EPS = 10.0
+HYBRID_BLEND_WEIGHTS: tuple[float, ...] = (0.0, 0.35, 0.5)
+
+
+def _tree_mean_std(estimator: ExtraTreesRegressor, features: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Return ensemble mean and across-tree standard deviation for uncertainty scaling."""
+    tree_preds = np.column_stack([tree.predict(features) for tree in estimator.estimators_])
+    return tree_preds.mean(axis=1), tree_preds.std(axis=1)
+
+
+def run_uci_faults_multiclass_ensemble(
+    data_dir: str | Path, seeds: Sequence[int] = PREDICTIVE_SEEDS
+) -> dict[str, Any]:
+    """Run single-label 7-class ExtraTrees + GradientBoosting soft-voting ensemble on D01.
+
+    UCI Steel Plates Faults has mutually exclusive 1-of-7 fault classes (every row
+    has exactly one active fault). Training as a single-label multiclass problem
+    prevents invalid zero-fault or multi-fault predictions and captures per-class
+    confusion diagnostics.
+    """
+    frame = load_uci_faults(Path(data_dir) / DATA_FILES["D01"][0])
+    features = frame.iloc[:, :27].to_numpy(dtype=float)
+    label_matrix = frame.iloc[:, 27:].to_numpy(dtype=int)
+    if not np.all(label_matrix.sum(axis=1) == 1):
+        raise ValueError("UCI fault labels are not strictly mutually exclusive.")
+    target = np.argmax(label_matrix, axis=1)
+    class_names = list(frame.columns[27:])
+
+    per_seed: list[dict[str, Any]] = []
+    agg_cm = np.zeros((len(class_names), len(class_names)), dtype=int)
+
+    for seed in seeds:
+        x_train, x_test, y_train, y_test = train_test_split(
+            features,
+            target,
+            test_size=0.2,
+            random_state=seed,
+            shuffle=True,
+            stratify=target,
+        )
+        et = ExtraTreesClassifier(
+            n_estimators=300, max_features=0.7, random_state=seed, n_jobs=1
+        ).fit(x_train, y_train)
+        gbc = GradientBoostingClassifier(
+            n_estimators=120,
+            learning_rate=0.08,
+            max_depth=4,
+            subsample=0.8,
+            random_state=seed,
+        ).fit(x_train, y_train)
+
+        proba_et = et.predict_proba(x_test)
+        proba_gbc = gbc.predict_proba(x_test)
+        pred_et = np.argmax(proba_et, axis=1)
+        pred_gbc = np.argmax(proba_gbc, axis=1)
+        pred_ens = np.argmax(0.5 * (proba_et + proba_gbc), axis=1)
+
+        agg_cm += confusion_matrix(y_test, pred_ens, labels=list(range(len(class_names))))
+        per_seed.append(
+            {
+                "seed": int(seed),
+                "metrics": _round_metrics(
+                    {
+                        "accuracy": accuracy_score(y_test, pred_ens),
+                        "macro_f1": f1_score(y_test, pred_ens, average="macro"),
+                    }
+                ),
+                "extra_trees_metrics": _round_metrics(
+                    {
+                        "accuracy": accuracy_score(y_test, pred_et),
+                        "macro_f1": f1_score(y_test, pred_et, average="macro"),
+                    }
+                ),
+                "gradient_boosting_metrics": _round_metrics(
+                    {
+                        "accuracy": accuracy_score(y_test, pred_gbc),
+                        "macro_f1": f1_score(y_test, pred_gbc, average="macro"),
+                    }
+                ),
+            }
+        )
+
+    row_sums = agg_cm.sum(axis=1, keepdims=True)
+    cm_normalized = np.divide(
+        agg_cm, row_sums, out=np.zeros_like(agg_cm, dtype=float), where=row_sums > 0
+    )
+    return {
+        "dataset": "D01 UCI Steel Plates Faults (7-class mutually exclusive)",
+        "model_id": "multiclass_soft_voting_ensemble",
+        "model": (
+            "Soft-voting 7-class ensemble: ExtraTreesClassifier(n_estimators=300, "
+            "max_features=0.7) + GradientBoostingClassifier(n_estimators=120, "
+            "lr=0.08, max_depth=4, subsample=0.8)"
+        ),
+        "seeds": list(seeds),
+        "n_runs": len(per_seed),
+        "n_samples": int(len(frame)),
+        "n_features": 27,
+        "n_classes": len(class_names),
+        "class_names": class_names,
+        "metrics": {
+            "accuracy": _summary([row["metrics"]["accuracy"] for row in per_seed]),
+            "macro_f1": _summary([row["metrics"]["macro_f1"] for row in per_seed]),
+        },
+        "comparators": {
+            "multiclass_extra_trees": {
+                "accuracy": _summary(
+                    [row["extra_trees_metrics"]["accuracy"] for row in per_seed]
+                ),
+                "macro_f1": _summary(
+                    [row["extra_trees_metrics"]["macro_f1"] for row in per_seed]
+                ),
+            },
+            "multiclass_gradient_boosting": {
+                "accuracy": _summary(
+                    [row["gradient_boosting_metrics"]["accuracy"] for row in per_seed]
+                ),
+                "macro_f1": _summary(
+                    [row["gradient_boosting_metrics"]["macro_f1"] for row in per_seed]
+                ),
+            },
+        },
+        "confusion_matrix_counts": agg_cm.tolist(),
+        "confusion_matrix_normalized": [
+            [round(float(val), 4) for val in row] for row in cm_normalized
+        ],
+        "per_seed": per_seed,
+    }
+
+
+def _fit_hybrid_pair(
+    train_comps: np.ndarray,
+    train_y: np.ndarray,
+    max_features: float,
+    min_samples_leaf: int,
+) -> tuple[Pipeline, Pipeline]:
+    raw_pipe = Pipeline(
+        [
+            ("vectorizer", CompositionVectorizer()),
+            (
+                "model",
+                ExtraTreesRegressor(
+                    n_estimators=300,
+                    max_features=max_features,
+                    min_samples_leaf=min_samples_leaf,
+                    random_state=42,
+                    n_jobs=1,
+                ),
+            ),
+        ]
+    ).fit(train_comps, train_y)
+    phys_pipe = Pipeline(
+        [
+            ("vectorizer", MetallurgicalDescriptorVectorizer()),
+            (
+                "model",
+                ExtraTreesRegressor(
+                    n_estimators=300,
+                    max_features=max_features,
+                    min_samples_leaf=min_samples_leaf,
+                    random_state=42,
+                    n_jobs=1,
+                ),
+            ),
+        ]
+    ).fit(train_comps, train_y)
+    return raw_pipe, phys_pipe
+
+
+def _predict_hybrid_with_spread(
+    raw_pipe: Pipeline,
+    phys_pipe: Pipeline,
+    comps: np.ndarray,
+    phys_weight: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return blended prediction and tree-spread uncertainty scale sigma(x)."""
+    x_raw = raw_pipe.named_steps["vectorizer"].transform(comps)
+    mu_raw, sd_raw = _tree_mean_std(raw_pipe.named_steps["model"], x_raw)
+    if phys_weight <= 0.0:
+        return mu_raw, sd_raw
+    x_phys = phys_pipe.named_steps["vectorizer"].transform(comps)
+    mu_phys, sd_phys = _tree_mean_std(phys_pipe.named_steps["model"], x_phys)
+    mu = (1.0 - phys_weight) * mu_raw + phys_weight * mu_phys
+    sd = (1.0 - phys_weight) * sd_raw + phys_weight * sd_phys
+    return mu, sd
+
+
+def adaptive_conformal_quantile(
+    train_comps: np.ndarray,
+    train_y: np.ndarray,
+    max_features: float,
+    min_samples_leaf: int,
+    phys_weight: float,
+    *,
+    alpha: float = CONFORMAL_ALPHA,
+    n_splits: int = CONFORMAL_CV_FOLDS,
+    seed: int = CONFORMAL_CV_SEED,
+    eps: float = ADAPTIVE_CONFORMAL_EPS,
+) -> float:
+    """Return locally-weighted cross-conformal quantile q from training data only.
+
+    Nonconformity score: s_i = |y_i - y_hat_i| / (sigma_i + eps), where sigma_i
+    is the ensemble across-tree standard deviation. Outer test data is never used.
+    """
+    splitter = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
+    scores: list[float] = []
+    for fit_idx, cal_idx in splitter.split(train_comps):
+        raw_pipe, phys_pipe = _fit_hybrid_pair(
+            train_comps[fit_idx], train_y[fit_idx], max_features, min_samples_leaf
+        )
+        mu, sd = _predict_hybrid_with_spread(
+            raw_pipe, phys_pipe, train_comps[cal_idx], phys_weight
+        )
+        norm_res = np.abs(mu - train_y[cal_idx]) / (sd + eps)
+        scores.extend(norm_res.tolist())
+    ordered = np.sort(np.asarray(scores, dtype=float))
+    rank = int(np.ceil((len(ordered) + 1) * (1.0 - alpha)))
+    return float(ordered[max(0, min(rank - 1, len(ordered) - 1))])
+
+
+def run_matbench_steels_physics_hybrid(
+    data_dir: str | Path, folds: Sequence[int] = OFFICIAL_FOLDS
+) -> dict[str, Any]:
+    """Run leakage-safe hybrid composition + metallurgical descriptor ensemble on D04.
+
+    Includes:
+    - Inner-CV selection of ExtraTrees hyperparameters and physics-descriptor blend
+      weight strictly on each outer training fold.
+    - GradientBoostingRegressor comparator with metallurgical descriptors.
+    - Locally-weighted (adaptive) 90% cross-conformal prediction intervals.
+    - Per-sample out-of-fold parity records for all 312 steels.
+    """
+    root = Path(data_dir)
+    frame = load_matbench_steels(root / DATA_FILES["D04"][0])
+    splits = load_matbench_splits(root / DATA_FILES["D04-splits"][0])
+    position = {sample_id: index for index, sample_id in enumerate(frame["id"])}
+    compositions = np.asarray(frame["composition"].tolist(), dtype=object)
+    target = frame["yield_strength_mpa"].to_numpy(dtype=float)
+
+    per_fold: list[dict[str, Any]] = []
+    gbr_per_fold: list[dict[str, Any]] = []
+    parity_points: list[dict[str, Any]] = []
+
+    for fold in folds:
+        split = splits[f"fold_{fold}"]
+        train_ids, test_ids = split["train"], split["test"]
+        train_idx = [position[sid] for sid in train_ids]
+        test_idx = [position[sid] for sid in test_ids]
+        tr_c, tr_y = compositions[train_idx], target[train_idx]
+        te_c, te_y = compositions[test_idx], target[test_idx]
+
+        # Inner 4-fold CV on outer training split only to select (mf, leaf, phys_weight)
+        inner_kf = KFold(n_splits=NESTED_MATBENCH_INNER_FOLDS, shuffle=True, random_state=42)
+        best_score = float("inf")
+        best_cfg = (1.0, 1, 0.35)
+        for mf in (0.5, 1.0):
+            for leaf in (1, 2):
+                oof_raw = np.zeros(len(tr_y), dtype=float)
+                oof_phys = np.zeros(len(tr_y), dtype=float)
+                for fi, vi in inner_kf.split(tr_c):
+                    r_pipe, p_pipe = _fit_hybrid_pair(tr_c[fi], tr_y[fi], mf, leaf)
+                    oof_raw[vi] = r_pipe.predict(tr_c[vi])
+                    oof_phys[vi] = p_pipe.predict(tr_c[vi])
+                for w_phys in HYBRID_BLEND_WEIGHTS:
+                    oof_blend = (1.0 - w_phys) * oof_raw + w_phys * oof_phys
+                    mae_val = float(mean_absolute_error(tr_y, oof_blend))
+                    if mae_val < best_score:
+                        best_score = mae_val
+                        best_cfg = (mf, leaf, w_phys)
+
+        sel_mf, sel_leaf, sel_w = best_cfg
+        raw_pipe, phys_pipe = _fit_hybrid_pair(tr_c, tr_y, sel_mf, sel_leaf)
+        preds, spread = _predict_hybrid_with_spread(raw_pipe, phys_pipe, te_c, sel_w)
+
+        q_scale = adaptive_conformal_quantile(tr_c, tr_y, sel_mf, sel_leaf, sel_w)
+        half_widths = q_scale * (spread + ADAPTIVE_CONFORMAL_EPS)
+        coverage = float(
+            np.mean((te_y >= preds - half_widths) & (te_y <= preds + half_widths))
+        )
+
+        error = preds - te_y
+        naive_mae = float(
+            mean_absolute_error(te_y, np.full(len(te_y), tr_y.mean()))
+        )
+        fold_metrics = _round_metrics(
+            {
+                "mae_mpa": mean_absolute_error(te_y, preds),
+                "rmse_mpa": float(np.sqrt(np.mean(error**2))),
+                "r2": float(1.0 - np.sum(error**2) / np.sum((te_y - te_y.mean()) ** 2)),
+                "naive_mae_mpa": naive_mae,
+            }
+        )
+        adaptive_cal = {
+            "method": "locally-weighted cross-conformal (tree-spread normalized residuals on train only)",
+            "target_coverage": CONFORMAL_TARGET_COVERAGE,
+            "alpha": CONFORMAL_ALPHA,
+            "calibration_folds": CONFORMAL_CV_FOLDS,
+            "quantile_scale": round(float(q_scale), 4),
+            "mean_half_width_mpa": round(float(np.mean(half_widths)), 4),
+            "mean_width_mpa": round(float(np.mean(2.0 * half_widths)), 4),
+            "median_width_mpa": round(float(np.median(2.0 * half_widths)), 4),
+            "empirical_coverage": round(coverage, 4),
+        }
+        per_fold.append(
+            {
+                "fold": int(fold),
+                "metrics": fold_metrics,
+                "split_fingerprint": _ids_fingerprint(train_ids, test_ids),
+                "selected_params": {
+                    "max_features": sel_mf,
+                    "min_samples_leaf": sel_leaf,
+                    "physics_weight": sel_w,
+                },
+                "inner_cv_best_mae_mpa": round(best_score, 4),
+                "adaptive_interval": adaptive_cal,
+            }
+        )
+
+        for obs_v, pred_v, hw_v in zip(te_y, preds, half_widths, strict=True):
+            parity_points.append(
+                {
+                    "fold": int(fold),
+                    "observed_mpa": round(float(obs_v), 2),
+                    "predicted_mpa": round(float(pred_v), 2),
+                    "half_width_mpa": round(float(hw_v), 2),
+                }
+            )
+
+        # Boosting comparator with metallurgical descriptors on identical split
+        gbr_pipe = Pipeline(
+            [
+                ("vectorizer", MetallurgicalDescriptorVectorizer()),
+                (
+                    "model",
+                    GradientBoostingRegressor(
+                        n_estimators=200,
+                        learning_rate=0.05,
+                        max_depth=3,
+                        subsample=0.8,
+                        random_state=42,
+                    ),
+                ),
+            ]
+        ).fit(tr_c, tr_y)
+        gbr_pred = gbr_pipe.predict(te_c)
+        gbr_err = gbr_pred - te_y
+        gbr_per_fold.append(
+            {
+                "fold": int(fold),
+                "metrics": _round_metrics(
+                    {
+                        "mae_mpa": mean_absolute_error(te_y, gbr_pred),
+                        "rmse_mpa": float(np.sqrt(np.mean(gbr_err**2))),
+                        "r2": float(
+                            1.0 - np.sum(gbr_err**2) / np.sum((te_y - te_y.mean()) ** 2)
+                        ),
+                        "naive_mae_mpa": naive_mae,
+                    }
+                ),
+            }
+        )
+
+    gate = evaluate_decision_gate(
+        [row["metrics"]["naive_mae_mpa"] for row in per_fold],
+        [row["metrics"]["mae_mpa"] for row in per_fold],
+        [row["metrics"]["r2"] for row in per_fold],
+    )
+    metric_names = ("mae_mpa", "rmse_mpa", "r2", "naive_mae_mpa")
+    return {
+        "dataset": "D04 matbench_steels (R08)",
+        "model_id": "physics_hybrid_extra_trees",
+        "model": (
+            "Inner-CV hybrid ensemble: atomic-fraction ExtraTrees + "
+            "MetallurgicalDescriptorVectorizer ExtraTrees (adaptive 90% PI)"
+        ),
+        "folds": list(folds),
+        "n_folds": len(per_fold),
+        "n_samples": int(len(frame)),
+        "target_unit": "MPa",
+        "metrics": {
+            name: _summary([row["metrics"][name] for row in per_fold])
+            for name in metric_names
+        },
+        "adaptive_interval": {
+            "method": per_fold[0]["adaptive_interval"]["method"],
+            "target_coverage": CONFORMAL_TARGET_COVERAGE,
+            "alpha": CONFORMAL_ALPHA,
+            "calibration_folds": CONFORMAL_CV_FOLDS,
+            "mean_width_mpa": _summary(
+                [row["adaptive_interval"]["mean_width_mpa"] for row in per_fold]
+            ),
+            "median_width_mpa": _summary(
+                [row["adaptive_interval"]["median_width_mpa"] for row in per_fold]
+            ),
+            "empirical_coverage": _summary(
+                [row["adaptive_interval"]["empirical_coverage"] for row in per_fold]
+            ),
+        },
+        "boosting_comparator": {
+            "model": "MetallurgicalDescriptorVectorizer + GradientBoostingRegressor(n_estimators=200, lr=0.05, max_depth=3)",
+            "metrics": {
+                name: _summary([row["metrics"][name] for row in gbr_per_fold])
+                for name in metric_names
+            },
+            "per_fold": gbr_per_fold,
+        },
+        "parity_points": parity_points,
+        "per_fold": per_fold,
+        "decision_gate": gate,
+    }
+
+
 def _run_twice(name: str, function, kwargs: dict[str, Any]) -> dict:
     first = function(**kwargs)
     second = function(**kwargs)
@@ -804,6 +1234,16 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
         run_matbench_steels_nested_multi,
         {"data_dir": data_dir, "folds": OFFICIAL_FOLDS},
     )
+    experiments["uci_faults_multiclass_ensemble"] = _run_twice(
+        "uci_faults_multiclass_ensemble",
+        run_uci_faults_multiclass_ensemble,
+        {"data_dir": data_dir, "seeds": PREDICTIVE_SEEDS},
+    )
+    experiments["matbench_steels_physics_hybrid"] = _run_twice(
+        "matbench_steels_physics_hybrid",
+        run_matbench_steels_physics_hybrid,
+        {"data_dir": data_dir, "folds": OFFICIAL_FOLDS},
+    )
 
     rf_d01 = experiments["uci_faults_random_forest"]["metrics"]
     rf_d04 = experiments["matbench_steels_random_forest"]["metrics"]
@@ -811,6 +1251,10 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
     et_d04 = experiments["matbench_steels_extra_trees"]["metrics"]
     nested_u = experiments["uci_faults_nested_extra_trees"]["metrics"]
     nested_d = experiments["matbench_steels_nested_extra_trees"]["metrics"]
+    mc_u = experiments["uci_faults_multiclass_ensemble"]["metrics"]
+    hyb_d = experiments["matbench_steels_physics_hybrid"]["metrics"]
+    hyb_adaptive = experiments["matbench_steels_physics_hybrid"]["adaptive_interval"]
+    hyb_gate = experiments["matbench_steels_physics_hybrid"]["decision_gate"]
     intervals = experiments["matbench_steels_nested_extra_trees"][
         "interval_calibration"
     ]
@@ -824,12 +1268,20 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
     d01_gain_pp = (
         nested_u["accuracy"]["mean"] - et_d01["accuracy"]["mean"]
     ) * 100.0
+    d01_mc_gain_pp = (
+        mc_u["accuracy"]["mean"] - nested_u["accuracy"]["mean"]
+    ) * 100.0
     summary = {
-        "headline_model": "Nested-CV ExtraTrees (inner-selected hyperparameters)",
-        "case_verdict": (
-            "predictive gate passed" if gate["passed"] else "predictive gate not passed"
+        "headline_model": (
+            "UCI: 7-class Soft-Voting Ensemble (ET + GBC) · "
+            "MatBench: Inner-CV Hybrid Physics/Composition ExtraTrees (Adaptive 90% PI)"
         ),
-        "decision_gate_passed": bool(gate["passed"]),
+        "case_verdict": (
+            "predictive gate passed"
+            if (gate["passed"] and hyb_gate["passed"])
+            else "predictive gate not passed"
+        ),
+        "decision_gate_passed": bool(gate["passed"] and hyb_gate["passed"]),
         "nested_search": {
             "outer_protocol": (
                 "D01: five fixed stratified seeds; D04: five official MatBench folds"
@@ -863,11 +1315,25 @@ def reproduce(data_dir: str | Path, seed: int = 42, fold: int = 0) -> dict:
         "d01_nested_accuracy_std": nested_u["accuracy"]["std"],
         "d01_nested_macro_f1": nested_u["macro_f1"]["mean"],
         "d01_nested_macro_f1_std": nested_u["macro_f1"]["std"],
+        "d01_multiclass_accuracy": mc_u["accuracy"]["mean"],
+        "d01_multiclass_accuracy_std": mc_u["accuracy"]["std"],
+        "d01_multiclass_macro_f1": mc_u["macro_f1"]["mean"],
+        "d01_multiclass_macro_f1_std": mc_u["macro_f1"]["std"],
+        "d01_multiclass_gain_vs_nested_pp": round(float(d01_mc_gain_pp), 2),
         "d04_nested_mae_mpa": nested_d["mae_mpa"]["mean"],
         "d04_nested_mae_std_mpa": nested_d["mae_mpa"]["std"],
         "d04_nested_rmse_mpa": nested_d["rmse_mpa"]["mean"],
         "d04_nested_r2": nested_d["r2"]["mean"],
         "d04_nested_r2_std": nested_d["r2"]["std"],
+        "d04_hybrid_mae_mpa": hyb_d["mae_mpa"]["mean"],
+        "d04_hybrid_mae_std_mpa": hyb_d["mae_mpa"]["std"],
+        "d04_hybrid_rmse_mpa": hyb_d["rmse_mpa"]["mean"],
+        "d04_hybrid_r2": hyb_d["r2"]["mean"],
+        "d04_hybrid_r2_std": hyb_d["r2"]["std"],
+        "d04_adaptive_interval_empirical_coverage": hyb_adaptive["empirical_coverage"]["mean"],
+        "d04_adaptive_interval_empirical_coverage_std": hyb_adaptive["empirical_coverage"]["std"],
+        "d04_adaptive_interval_mean_width_mpa": hyb_adaptive["mean_width_mpa"]["mean"],
+        "d04_adaptive_interval_median_width_mpa": hyb_adaptive["median_width_mpa"]["mean"],
         "d04_interval_target_coverage": CONFORMAL_TARGET_COVERAGE,
         "d04_interval_empirical_coverage": intervals["empirical_coverage"]["mean"],
         "d04_interval_empirical_coverage_std": intervals["empirical_coverage"]["std"],

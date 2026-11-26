@@ -1,70 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="620" viewBox="0 0 960 620" role="img" aria-label="Case 01 Springer-style quantitative summary scorecard">
-<rect width="960" height="620" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="648" viewBox="0 0 980 648" role="img" aria-label="Case 01 Springer-style quantitative summary scorecard">
+<rect width="980" height="648" fill="#ffffff"/>
 <text x="36.0" y="34.0" fill="#003b71" font-size="12" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Table 1</text>
 <text x="88.0" y="34.0" fill="#111827" font-size="12" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Reproducible benchmark summary for steel-plate fault classification and yield-strength prediction (Case 01)</text>
-<text x="36.0" y="52.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Nested-CV ExtraTrees evaluated on five stratified seeds (UCI Steel Plates Faults) and five official MatBench folds (matbench_steels); values report mean ± SD.</text>
-<line x1="36" y1="66" x2="924" y2="66" stroke="#1a1a1a" stroke-width="1.6"/>
+<text x="36.0" y="52.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Evaluated over 5 stratified seeds (UCI Steel Plates Faults) and 5 official MatBench folds (matbench_steels); values report mean ± SD.</text>
+<line x1="36" y1="66" x2="944" y2="66" stroke="#1a1a1a" stroke-width="1.6"/>
 <text x="40.0" y="84.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Benchmark / Metric</text>
-<text x="330.0" y="84.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Nested ExtraTrees</text>
-<text x="485.0" y="84.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Fixed ExtraTrees</text>
-<text x="640.0" y="84.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">RandomForest</text>
-<text x="785.0" y="84.0" fill="#4b5563" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Linear Baseline</text>
-<text x="920.0" y="84.0" fill="#4b5563" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Split Protocol</text>
-<line x1="36" y1="93" x2="924" y2="93" stroke="#1a1a1a" stroke-width="0.9"/>
-<text x="40.0" y="116.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">UCI Faults — Exact-match accuracy</text>
-<text x="330.0" y="116.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.7486 ± 0.0072</text>
-<text x="485.0" y="116.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.6936 ± 0.0114</text>
-<text x="640.0" y="116.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.6766 ± 0.0075</text>
-<text x="785.0" y="116.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Logistic 0.5013</text>
-<text x="920.0" y="116.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 stratified seeds</text>
-<rect x="36" y="129" width="888" height="26" fill="#f8f9fa"/>
+<text x="350.0" y="84.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Headline Model</text>
+<text x="505.0" y="84.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Nested ExtraTrees</text>
+<text x="655.0" y="84.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Fixed ExtraTrees</text>
+<text x="800.0" y="84.0" fill="#4b5563" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Linear Baseline</text>
+<text x="940.0" y="84.0" fill="#4b5563" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Protocol</text>
+<line x1="36" y1="93" x2="944" y2="93" stroke="#1a1a1a" stroke-width="0.9"/>
+<text x="40.0" y="116.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">UCI Faults — Accuracy</text>
+<text x="350.0" y="116.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8185 ± 0.0066</text>
+<text x="505.0" y="116.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.7486 ± 0.0072</text>
+<text x="655.0" y="116.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.6936 ± 0.0114</text>
+<text x="800.0" y="116.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Logistic 0.5013</text>
+<text x="940.0" y="116.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 seeds (7-class)</text>
+<rect x="36" y="129" width="908" height="26" fill="#f8f9fa"/>
 <text x="40.0" y="146.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">UCI Faults — Macro F1</text>
-<text x="330.0" y="146.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8114 ± 0.0164</text>
-<text x="485.0" y="146.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.7755 ± 0.0219</text>
-<text x="640.0" y="146.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.7526 ± 0.0176</text>
-<text x="785.0" y="146.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Logistic 0.6207</text>
-<text x="920.0" y="146.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 stratified seeds</text>
+<text x="350.0" y="146.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8319 ± 0.0119</text>
+<text x="505.0" y="146.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8114 ± 0.0164</text>
+<text x="655.0" y="146.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.7755 ± 0.0219</text>
+<text x="800.0" y="146.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Logistic 0.6207</text>
+<text x="940.0" y="146.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 seeds (7-class)</text>
 <text x="40.0" y="176.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MatBench Steels — MAE (MPa)</text>
-<text x="330.0" y="176.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">77.6894 ± 7.2132</text>
-<text x="485.0" y="176.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">79.1707 ± 8.6980</text>
-<text x="640.0" y="176.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">89.6300 ± 7.4424</text>
-<text x="785.0" y="176.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Ridge 220.0009</text>
-<text x="920.0" y="176.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 official folds</text>
-<rect x="36" y="189" width="888" height="26" fill="#f8f9fa"/>
+<text x="350.0" y="176.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">77.4728 ± 7.4580</text>
+<text x="505.0" y="176.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">77.6894 ± 7.2132</text>
+<text x="655.0" y="176.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">79.1707 ± 8.6980</text>
+<text x="800.0" y="176.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Ridge 220.0009</text>
+<text x="940.0" y="176.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 official folds</text>
+<rect x="36" y="189" width="908" height="26" fill="#f8f9fa"/>
 <text x="40.0" y="206.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MatBench Steels — RMSE (MPa)</text>
-<text x="330.0" y="206.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">111.0717 ± 12.3347</text>
-<text x="485.0" y="206.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">112.0894 ± 12.5902</text>
-<text x="640.0" y="206.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">127.9791 ± 9.8846</text>
-<text x="785.0" y="206.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Ridge 273.1735</text>
-<text x="920.0" y="206.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 official folds</text>
+<text x="350.0" y="206.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">110.7562 ± 12.7624</text>
+<text x="505.0" y="206.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">111.0717 ± 12.3347</text>
+<text x="655.0" y="206.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">112.0894 ± 12.5902</text>
+<text x="800.0" y="206.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Ridge 273.1735</text>
+<text x="940.0" y="206.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 official folds</text>
 <text x="40.0" y="236.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MatBench Steels — R²</text>
-<text x="330.0" y="236.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8581 ± 0.0398</text>
-<text x="485.0" y="236.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8566 ± 0.0374</text>
-<text x="640.0" y="236.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8141 ± 0.0388</text>
-<text x="785.0" y="236.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Ridge 0.1271</text>
-<text x="920.0" y="236.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 official folds</text>
-<line x1="36" y1="262" x2="924" y2="262" stroke="#e5e7eb" stroke-width="1"/>
-<text x="40.0" y="284.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Decision Gate &amp; Uncertainty Calibration (Training-Fold Calibrated Only)</text>
-<text x="920.0" y="284.0" fill="#166534" font-size="11" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Adoption Gate: PASS</text>
+<text x="350.0" y="236.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8588 ± 0.0404</text>
+<text x="505.0" y="236.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8581 ± 0.0398</text>
+<text x="655.0" y="236.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">0.8566 ± 0.0374</text>
+<text x="800.0" y="236.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Ridge 0.1271</text>
+<text x="940.0" y="236.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">5 official folds</text>
+<line x1="36" y1="262" x2="944" y2="262" stroke="#e5e7eb" stroke-width="1"/>
+<text x="40.0" y="284.0" fill="#003b71" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Decision Gate &amp; Uncertainty Calibration (Outer Training Splits Only)</text>
+<text x="940.0" y="284.0" fill="#166534" font-size="11" font-weight="bold" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Adoption Gate: PASS</text>
 <text x="40.0" y="308.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Gate criterion</text>
-<text x="185.0" y="308.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MAE reduction ≥ 50% vs. train-mean (229.7 MPa) on every fold AND mean R² ≥ 0.70.</text>
-<text x="40.0" y="332.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Observed performance</text>
-<text x="185.0" y="332.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Fold MAE reductions: 62.5%, 68.2%, 65.1%, 68.1%, 67.3%; mean R² = 0.8581.</text>
-<text x="40.0" y="356.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Nested-CV gain</text>
-<text x="185.0" y="356.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">UCI accuracy +5.50 pp; MatBench MAE 1.9% lower than fixed ExtraTrees (13.3% below RandomForest).</text>
-<text x="40.0" y="380.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Cross-conformal 90% PI</text>
-<text x="185.0" y="380.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Empirical coverage 92.0% ± 3.0%; mean full width 389.1 ± 30.8 MPa (conservative screening band, not a release spec).</text>
-<line x1="36" y1="414" x2="924" y2="414" stroke="#1a1a1a" stroke-width="0.9"/>
-<text x="40.0" y="436.0" fill="#b91c1c" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">External Literature Context (Quoted Only — Not Independently Reproduced Here)</text>
-<text x="40.0" y="460.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MatBench Leaderboard (Dunn et al., 2020)</text>
-<text x="310.0" y="460.0" fill="#b91c1c" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MODNet v0.1.12: 87.7627 MPa MAE</text>
-<text x="550.0" y="460.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Different model &amp; matminer featurization; not a like-for-like comparison.</text>
-<text x="40.0" y="486.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">NIMS Steel Fatigue (Agrawal et al., 2014)</text>
-<text x="310.0" y="486.0" fill="#b91c1c" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Reported R² &gt; 0.97 (LOOCV, n = 437)</text>
-<text x="550.0" y="486.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">External dataset unavailable in this repository; quoted as literature context only.</text>
-<line x1="36" y1="504" x2="924" y2="504" stroke="#1a1a1a" stroke-width="1.6"/>
-<text x="36.0" y="526.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Notes: All reproduced values are computed strictly from public datasets (UCI Steel Plates Faults, CC BY 4.0; MatBench matbench_steels) with zero</text>
-<text x="36.0" y="541.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">plant or proprietary data. Inner CV and composition vocabulary fitting are confined strictly to outer training splits to prevent data leakage.</text>
-<text x="36.0" y="556.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Every experiment payload is executed twice consecutively and verified for exact numerical identity before writing results.</text>
-<text x="36.0" y="586.0" fill="#4b5563" font-size="9" font-weight="normal" font-style="italic" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Source: results/metrics.json · base_commit 95c39fef2884 · Case 01 (reproducible-steel-models)</text>
+<text x="155.0" y="308.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MAE reduction ≥ 50% vs. train-mean (229.7 MPa) on every fold AND mean R² ≥ 0.70.</text>
+<text x="40.0" y="332.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Observed folds</text>
+<text x="155.0" y="332.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Fold MAE reductions: 62.5%, 68.7%, 65.1%, 68.1%, 67.3%; mean R² = 0.8588; RandomForest comparator MAE = 89.63 MPa.</text>
+<text x="40.0" y="356.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">7-class UCI gain</text>
+<text x="155.0" y="356.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Mutually exclusive ET + GBC soft-voting ensemble raises accuracy by +6.99 pp over multi-label Nested ExtraTrees (RF: 0.6766).</text>
+<text x="40.0" y="380.0" fill="#111827" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Adaptive 90% PI</text>
+<text x="155.0" y="380.0" fill="#4b5563" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Tree-spread cross-conformal coverage 90.4% ± 5.7%; median width 298.4 MPa (mean 344.0 MPa vs. constant 389.1 MPa).</text>
+<line x1="36" y1="418" x2="944" y2="418" stroke="#1a1a1a" stroke-width="0.9"/>
+<text x="40.0" y="440.0" fill="#b91c1c" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">External Literature Context (Quoted Only — Not Independently Reproduced Here)</text>
+<text x="40.0" y="464.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MatBench Leaderboard (Dunn et al., 2020)</text>
+<text x="310.0" y="464.0" fill="#b91c1c" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">MODNet v0.1.12: 87.7627 MPa MAE</text>
+<text x="550.0" y="464.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Different neural architecture &amp; matminer featurization; not like-for-like.</text>
+<text x="40.0" y="490.0" fill="#111827" font-size="10" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">NIMS Steel Fatigue (Agrawal et al., 2014)</text>
+<text x="310.0" y="490.0" fill="#b91c1c" font-size="10" font-weight="bold" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Reported R² &gt; 0.97 (LOOCV, n = 437)</text>
+<text x="550.0" y="490.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">External dataset unavailable here; quoted strictly as literature context.</text>
+<line x1="36" y1="510" x2="944" y2="510" stroke="#1a1a1a" stroke-width="1.6"/>
+<text x="36.0" y="532.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Notes: Headline UCI model is a 7-class ExtraTrees + GradientBoosting soft-voting ensemble; headline MatBench model is an inner-CV hybrid</text>
+<text x="36.0" y="547.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">composition + metallurgical-descriptor ExtraTrees ensemble with locally-weighted 90% cross-conformal intervals. No plant data are used.</text>
+<text x="36.0" y="562.0" fill="#4b5563" font-size="9" font-weight="normal" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Every experiment payload is executed twice consecutively and verified for exact numerical identity before writing results.</text>
+<text x="36.0" y="596.0" fill="#4b5563" font-size="9" font-weight="normal" font-style="italic" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif">Source: results/metrics.json · base_commit 5e018d98a054 · Case 01 (reproducible-steel-models)</text>
 </svg>
